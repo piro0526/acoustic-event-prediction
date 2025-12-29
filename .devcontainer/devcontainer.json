@@ -1,0 +1,44 @@
+{
+  "name": "python-node-cuda-dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+
+  "runArgs": [
+    "--gpus=all"
+  ],
+
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+
+  // -------------------------------------------------------
+  // ★ 環境変数を設定する placeholder
+  // -------------------------------------------------------
+  "containerEnv": {
+    "CLAUDE_CODE_USE_BEDROCK": "1",
+    "AWS_BEARER_TOKEN_BEDROCK": "ABSKQmVkcm9ja0FQSUtleS04dGRlLWF0LTc4NzM5MjkzNjY1NTpMVE00ZTkrWmV0dEpwNlFTNSs4MWVBMmVLVm5xQVJMelFzN3gwdDd6bFJlV2ExTmE4c0VMbVhBSWkxMD0="
+  },
+
+  // -------------------------------------------------------
+  // ★ VS Code の設定 placeholder
+  // -------------------------------------------------------
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "ms-vscode-remote.remote-containers"
+      ],
+      "settings": {
+        "docker.dockerPath": "docker"
+      }
+    }
+  },
+
+  "postCreateCommand": "uv python install 3.12 && uv venv",
+
+  "remoteUser": "vscode"
+}
