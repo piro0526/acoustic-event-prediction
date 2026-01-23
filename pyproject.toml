@@ -1,0 +1,69 @@
+[project]
+name = "acoustic-event-prediction"
+version = "0.1.0"
+description = "Acoustic event prediction using Moshi/Mimi models on PodcastFillers dataset"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    # Core dependencies (from Moshi)
+    "torch >= 2.2.0, < 2.8",
+    "torchaudio>=2.0.0",
+    "numpy>=1.26,<2.3",
+    "tqdm>=4.48",
+    # Model and tokenization (from Moshi)
+    "sentencepiece == 0.2",
+    "safetensors >= 0.4.0, < 0.7",
+    "einops >= 0.7, < 0.9",
+    # HuggingFace (from Moshi)
+    "huggingface-hub >= 0.24, < 0.34",
+    # Audio processing (from Moshi)
+    "sphn >= 0.1.4, < 0.2.0",  # For Opus streaming support
+    "sounddevice == 0.5",
+    "soundfile >= 0.12.1",  # Backend for torchaudio to load audio files
+    "aiohttp>=3.10.5, <3.12",
+    # Optional: bitsandbytes for quantization (Linux only, from Moshi)
+    "bitsandbytes >= 0.45, < 0.46; sys_platform == 'linux'",
+    # Laughter prediction dependencies
+    "scikit-learn>=1.3.0",  # For metrics computation
+    "matplotlib>=3.7.0",    # For plots
+    "seaborn>=0.12.0",      # For confusion matrix visualization
+    "pandas >= 2.0.0",        # For data handling
+    "tensorboard>=2.14.0",  # For training visualization
+    "umap-learn>=0.5.11",
+    "lightgbm>=4.6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest >= 8.3.3",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "pyright",
+    "flake8",
+    "pre-commit",
+    "gradio-webrtc>=0.0.18"
+]
+
+[project.scripts]
+moshi-server-py = "moshi.server:main"
+moshi-client-py = "moshi.client:main"
+moshi-inference = "moshi.run_inference:main"
+moshi-tts = "moshi.run_tts:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {attr = "moshi.__version__"}
+
+[tool.black]
+line-length = 120
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"

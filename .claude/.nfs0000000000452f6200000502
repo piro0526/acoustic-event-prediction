@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(nvidia-smi:*)",
+      "Bash(pkill:*)",
+      "Bash(uv add:*)",
+      "Bash(uv run python:*)",
+      "Bash(python -m src.laughter_detection.extract_lgb_features:*)",
+      "Bash(tee:*)",
+      "Bash(ls:*)",
+      "Bash(wait)"
+    ]
+  }
+}
