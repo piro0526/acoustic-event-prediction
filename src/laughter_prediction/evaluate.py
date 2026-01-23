@@ -268,7 +268,13 @@ def main():
         '--features_dir',
         type=str,
         default='output/laughter/features',
-        help='Directory containing features/[split]/ with features.npy and labels.npy'
+        help='Directory containing episode-level features and labels'
+    )
+    parser.add_argument(
+        '--shift_frames',
+        type=int,
+        default=1,
+        help='Prediction shift value to use for labels (e.g., 1, 5, 10, 25)'
     )
     parser.add_argument(
         '--output_dir',
@@ -324,6 +330,7 @@ def main():
     test_dataset = LaughterDataset(
         Path(args.features_dir),
         split=args.split,
+        shift_frames=args.shift_frames,
         shuffle=False
     )
     logger.info(f"Test dataset loaded with {len(test_dataset)} frames")
@@ -370,6 +377,7 @@ def main():
             val_dataset = LaughterDataset(
                 Path(args.features_dir),
                 split='validation',
+                shift_frames=args.shift_frames,
                 shuffle=False
             )
             logger.info(f"Validation dataset loaded with {len(val_dataset)} frames")

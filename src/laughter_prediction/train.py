@@ -272,7 +272,13 @@ def main():
         '--features_dir',
         type=str,
         default='output/laughter/features',
-        help='Directory containing features/[split]/ with features.npy and labels.npy'
+        help='Directory containing episode-level features and labels'
+    )
+    parser.add_argument(
+        '--shift_frames',
+        type=int,
+        default=1,
+        help='Prediction shift value to use for labels (e.g., 1, 5, 10, 25)'
     )
     parser.add_argument(
         '--output_dir',
@@ -403,6 +409,7 @@ def main():
     train_dataset = LaughterDataset(
         Path(args.features_dir),
         split='train',
+        shift_frames=args.shift_frames,
         shuffle=True
     )
 
@@ -411,6 +418,7 @@ def main():
         val_dataset = LaughterDataset(
             Path(args.features_dir),
             split='validation',
+            shift_frames=args.shift_frames,
             shuffle=False
         )
     except FileNotFoundError:

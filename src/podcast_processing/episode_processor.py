@@ -5,12 +5,15 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+import numpy as np
 import torch
 import torch.nn.functional as F
 import torchaudio
 
 from finetune.data.interleaver import Interleaver
 from podcast_processing.alignment_merger import AlignmentMerger, Alignment
+from podcast_processing.episode_output_writer import EpisodeOutputWriter
+from podcast_processing.label_generator import LabelGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +30,7 @@ class EpisodeProcessor:
     6. Saving results with metadata
     """
 
-    def __init__(self, mimi, lm_model, tokenizer, device):
+    def __init__(self, mimi, lm_model, tokenizer, device, shift_frames: int):
         """Initialize processor with models.
 
         Args:
@@ -35,12 +38,13 @@ class EpisodeProcessor:
             lm_model: LMModel for transformer processing
             tokenizer: SentencePiece tokenizer
             device: Device to run on (e.g., 'cuda:0')
+            shift_frames: Prediction shift value for label generation
         """
         self.mimi = mimi
         self.lm = lm_model
         self.tokenizer = tokenizer
         self.device = device
-
+        self.shift_frames = shift_frames
 
         # Initialize Interleaver for text token stream creation
         self.interleaver = Interleaver(
@@ -53,29 +57,52 @@ class EpisodeProcessor:
         )
 
         self.alignment_merger = AlignmentMerger()
+        self.label_generator = LabelGenerator(frame_rate=12.5)
 
-    def process_episode(self, episode_info: Dict, output_path: Path):
-        """Process a single episode and save transformer outputs.
+    def process_episode(self, episode_info: Dict, output_root: Path, annotations_dir: Path):
+        """Process a single episode and save features, labels, and metadata.
 
         Args:
             episode_info: Dict with 'split', 'name', 'audio_dir', 'diarization', 'transcript'
-            output_path: Path to save output .pt file
+            output_root: Base output directory (not episode-specific path)
+            annotations_dir: Directory containing episode_event_speaker_mapping annotations
         """
         logger.info(f"Processing episode: {episode_info['name']}")
 
-        # Step 1: Load diarization and get top 2 speakers by total_time
+        # Initialize output writer
+        writer = EpisodeOutputWriter(
+            output_root=output_root,
+            episode_name=episode_info['name'],
+            split=episode_info['split'],
+            shift_frames=self.shift_frames
+        )
+        writer.prepare_directory()
+
+        # Load laughter annotations
+        annotation_path = (
+            annotations_dir / episode_info['split'] /
+            f"{episode_info['name']}.json"
+        )
+
+        if not annotation_path.exists():
+            logger.warning(f"Annotation not found: {annotation_path}, skipping labels")
+            laughter_events = []
+        else:
+            laughter_events = self.label_generator.load_laughter_events(annotation_path)
+
+        # Load diarization and get top 2 speakers by total_time
         speakers = self._get_top_2_speakers(episode_info['diarization'])
         longer_spk, shorter_spk = speakers[0], speakers[1]
 
         logger.info(f"Top speakers: {longer_spk} (longer), {shorter_spk} (shorter)")
 
-        # Step 2: Load and merge alignments
+        # Load and merge alignments
         alignments = self.alignment_merger.merge_transcript_with_diarization(
             episode_info['transcript'],
             episode_info['diarization']
         )
 
-        # Step 3: Load audio files for both speakers
+        # Load audio files for both speakers
         user_audio_1, system_audio_1 = self._load_audios(
             episode_info['audio_dir'], longer_spk, shorter_spk
         )
@@ -85,57 +112,71 @@ class EpisodeProcessor:
 
         logger.info(f"Episode duration: {duration:.2f}s")
 
-        # Step 4 & 5: Process both assignments
-        transformer_outs = []
+        # Process both assignments
+        assignments_info = [
+            {'user': longer_spk, 'system': shorter_spk, 'user_audio': user_audio_1, 'system_audio': system_audio_1},
+            {'user': shorter_spk, 'system': longer_spk, 'user_audio': system_audio_1, 'system_audio': user_audio_1}
+        ]
 
-        # Assignment 0: longer→user, shorter→system
-        logger.info("Processing Assignment 0: longer→user, shorter→system")
-        out_0 = self._process_assignment(
-            user_audio=user_audio_1,
-            system_audio=system_audio_1,
-            alignments=alignments,
-            system_speaker_label=shorter_spk,
-            duration=duration
-        )
-        transformer_outs.append(out_0)
+        for assign_idx, assign_info in enumerate(assignments_info):
+            logger.info(f"Processing Assignment {assign_idx}")
 
-        # Clear GPU cache after first assignment
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+            # Check if features file exists
+            features_path = writer.episode_dir / f"features_assignment_{assign_idx}.npy"
 
-        # Assignment 1: shorter→user, longer→system (swap)
-        logger.info("Processing Assignment 1: shorter→user, longer→system")
-        out_1 = self._process_assignment(
-            user_audio=system_audio_1,  # swapped
-            system_audio=user_audio_1,  # swapped
-            alignments=alignments,
-            system_speaker_label=longer_spk,
-            duration=duration
-        )
-        transformer_outs.append(out_1)
+            if not features_path.exists():
+                # Extract features
+                features = self._process_assignment(
+                    user_audio=assign_info['user_audio'],
+                    system_audio=assign_info['system_audio'],
+                    alignments=alignments,
+                    system_speaker_label=assign_info['system'],
+                    duration=duration
+                )  # Returns [T, 4096]
 
-        # Clear GPU cache after second assignment
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+                num_frames = features.shape[0]
 
-        # Step 6: Save results with metadata
-        output_data = {
-            'transformer_out': torch.stack(transformer_outs, dim=0),  # [2, T, 4096]
-            'metadata': {
-                'episode_name': episode_info['name'],
-                'split': episode_info['split'],
-                'top_speakers': [longer_spk, shorter_spk],
-                'assignments': [
-                    {'user': longer_spk, 'system': shorter_spk},  # Assignment 0
-                    {'user': shorter_spk, 'system': longer_spk}   # Assignment 1
-                ],
-                'duration_seconds': float(duration),
-                'num_frames': int(transformer_outs[0].shape[0])
-            }
-        }
+                # Save features
+                writer.save_features(assign_idx, features)
+                logger.info(f"  Saved features: {num_frames} frames")
+            else:
+                # Load existing features to get num_frames
+                existing_features = np.load(features_path)
+                num_frames = existing_features.shape[0]
+                logger.info(f"  Features already exist: {num_frames} frames")
 
-        torch.save(output_data, output_path)
-        logger.info(f"Saved output to: {output_path}")
+            # Generate and save labels
+            if laughter_events:
+                labels = self.label_generator.create_labels_prediction(
+                    laughter_events=laughter_events,
+                    num_frames=num_frames,
+                    user_speaker_id=assign_info['user'],
+                    shift_frames=self.shift_frames
+                )
+
+                stats = self.label_generator.compute_label_statistics(labels)
+
+                # Save labels
+                writer.save_labels(assign_idx, labels)
+
+                # Add statistics to metadata buffer
+                writer.add_assignment_stats(
+                    assignment_idx=assign_idx,
+                    user_speaker_id=assign_info['user'],
+                    system_speaker_id=assign_info['system'],
+                    stats=stats
+                )
+
+                logger.info(f"  Saved labels (shift={self.shift_frames}): {stats['num_positive_frames']}/{num_frames} positive")
+
+            # Clear GPU cache after each assignment
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
+        # Save metadata after all assignments are processed
+        writer.save_metadata(episode_info, num_frames, duration)
+
+        logger.info(f"Completed episode: {episode_info['name']}")
 
     def _process_assignment(
         self,

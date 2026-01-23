@@ -36,7 +36,8 @@ class DistributedOrchestrator:
         self,
         dataset_root: str | Path,
         output_root: str | Path,
-        hf_repo: str = 'kyutai/moshiko-pytorch-bf16'
+        hf_repo: str = 'kyutai/moshiko-pytorch-bf16',
+        shift_frames: int = 1
     ):
         """Initialize orchestrator.
 
@@ -44,10 +45,15 @@ class DistributedOrchestrator:
             dataset_root: Root directory of PodcastFillers dataset
             output_root: Root directory for output files
             hf_repo: HuggingFace repository for models
+            shift_frames: Prediction shift value for label generation
         """
         self.dataset_root = Path(dataset_root)
         self.output_root = Path(output_root)
         self.hf_repo = hf_repo
+        self.shift_frames = shift_frames
+
+        # Annotations directory
+        self.annotations_dir = self.dataset_root / 'metadata' / 'episode_event_speaker_mapping'
 
         # Create output directories
         self.output_root.mkdir(parents=True, exist_ok=True)
@@ -96,9 +102,9 @@ class DistributedOrchestrator:
         # Load checkpoint info
         checkpoint = CheckpointInfo.from_hf_repo(
             hf_repo=self.hf_repo,
-            moshi_weights="custom_weights/moshi/consolidated.safetensors",
-            mimi_weights="custom_weights/mimi/consolidated.safetensors",
-            config_path="custom_weights/moshi/config.json"
+            moshi_weights="models/moshi/consolidated.safetensors",
+            mimi_weights="models/mimi/consolidated.safetensors",
+            config_path="models/moshi/config.json"
         )
 
         mimi = checkpoint.get_mimi(device=device)
@@ -122,7 +128,7 @@ class DistributedOrchestrator:
         logger.info(f"Models loaded on {device}")
 
         # Create processor
-        processor = EpisodeProcessor(mimi, lm_model, tokenizer, device)
+        processor = EpisodeProcessor(mimi, lm_model, tokenizer, device, shift_frames=self.shift_frames)
 
         # Process episodes
         success_count = 0
@@ -131,12 +137,13 @@ class DistributedOrchestrator:
         with tqdm(total=len(my_episodes), desc=f"GPU {rank}", position=rank) as pbar:
             for episode in my_episodes:
                 try:
-                    # Create output path
-                    output_path = self.output_root / episode['split'] / f"{episode['name']}.pt"
-                    output_path.parent.mkdir(parents=True, exist_ok=True)
+                    # Check if already processed (check for features file)
+                    check_path = (
+                        self.output_root / episode['split'] / episode['name'] /
+                        f"features_assignment_0.npy"
+                    )
 
-                    # Check if already processed
-                    if output_path.exists():
+                    if check_path.exists():
                         logger.info(f"Skipping already processed: {episode['name']}")
                         pbar.update(1)
                         continue
@@ -145,7 +152,11 @@ class DistributedOrchestrator:
                     self._validate_episode(episode)
 
                     # Process episode
-                    processor.process_episode(episode, output_path)
+                    processor.process_episode(
+                        episode_info=episode,
+                        output_root=self.output_root,
+                        annotations_dir=self.annotations_dir
+                    )
 
                     success_count += 1
                     logger.info(f"✓ {episode['name']}")

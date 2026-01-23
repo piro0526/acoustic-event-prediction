@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Acoustic event prediction system for detecting laughter in podcast audio. Uses Moshi/Mimi (Kyutai) transformer models to extract 4096-dimensional audio features from the PodcastFillers dataset, then trains binary classifiers to predict laughter events.
+Acoustic event prediction system for detecting laughter in podcast audio. Uses Moshi/Mimi (Kyutai) models to extract 4096-dimensional audio features from the PodcastFillers dataset, then trains binary classifiers to predict laughter events.
 
 **Tech Stack:** Python 3.12+, PyTorch, torchaudio, HuggingFace, scikit-learn, multi-GPU training via DDP
 
@@ -19,36 +19,42 @@ uv sync
 uv sync --extra dev
 ```
 
-### Feature Extraction
+### Feature Extraction and Label Generation
 ```bash
-# Single GPU - compute transformer features from audio
-python scripts/compute_transformer_outs.py \
+# Single GPU - compute features and labels (default shift: 1 frame)
+python scripts/compute_features.py \
     --dataset_root data/PodcastFillers \
-    --output_root output/transformer_outs
+    --output_root output/laughter/features
 
-# Multi-GPU (8 GPUs)
-torchrun --nproc_per_node=8 scripts/compute_transformer_outs.py \
+# Multi-GPU (8 GPUs) with custom shift value
+torchrun --nproc_per_node=8 scripts/compute_features.py \
     --dataset_root data/PodcastFillers \
-    --output_root output/transformer_outs \
+    --output_root output/laughter/features \
+    --shift_frames 5 \
     --hf_repo kyutai/moshiko-pytorch-bf16
+
+# Generate labels for additional shift values (features will be skipped)
+python scripts/compute_features.py \
+    --dataset_root data/PodcastFillers \
+    --output_root output/laughter/features \
+    --shift_frames 10
 ```
 
 ### Model Training
 ```bash
-# Single GPU
+# Single GPU (default shift=1)
 python scripts/train_laughter_predictor.py \
-    --transformer_dir output/transformer_outs \
-    --labels_dir data/PodcastFillers/metadata/episode_laughter_prediction_intervals \
+    --features_dir output/laughter/features \
+    --shift_frames 1 \
     --output_dir output/laughter_prediction \
     --batch_size 512 \
     --learning_rate 1e-4 \
     --epochs 50
 
-# Multi-GPU (4 GPUs)
+# Multi-GPU (4 GPUs) with custom shift value
 torchrun --nproc_per_node=4 scripts/train_laughter_predictor.py \
-    --transformer_dir output/transformer_outs \
-    --labels_dir data/PodcastFillers/metadata/episode_laughter_prediction_intervals \
-    --turns_dir data/PodcastFillers/metadata/episode_laughter_turns \
+    --features_dir output/laughter/features \
+    --shift_frames 5 \
     --output_dir output/laughter_prediction \
     --batch_size 512 \
     --learning_rate 3e-4 \
@@ -56,7 +62,7 @@ torchrun --nproc_per_node=4 scripts/train_laughter_predictor.py \
     --num_workers 0 \
     --loss_type bce
 
-# Or use the provided script
+# Or use the provided script (may need updating)
 ./run_train.sh
 ```
 
@@ -95,9 +101,11 @@ src/
 │
 ├── podcast_processing/         # Data preprocessing pipeline
 │   ├── distributed_orchestrator.py  # Multi-GPU feature extraction coordinator
-│   ├── episode_processor.py         # Process individual episodes
-│   ├── extract_features.py          # Extract 4096-dim transformer features
-│   └── create_labels.py             # Generate binary laughter labels
+│   ├── episode_processor.py         # Process individual episodes (features + labels)
+│   ├── episode_output_writer.py     # Structured output writer for episode-level files
+│   ├── label_generator.py           # Generate binary laughter labels from annotations
+│   ├── extract_features.py          # [DEPRECATED] Extract 4096-dim features
+│   └── create_labels.py             # [DEPRECATED] Generate binary laughter labels
 │
 └── laughter_prediction/        # Core prediction module
     ├── model.py                # LaughterPredictor classifier
@@ -111,25 +119,24 @@ src/
 
 ### Data Pipeline
 
-1. **Feature Extraction** ([podcast_processing/](src/podcast_processing/)):
-   - Loads PodcastFillers episodes (audio + metadata)
-   - Passes audio through Moshi transformer encoder
+1. **Feature Extraction and Label Generation** ([podcast_processing/](src/podcast_processing/)):
+   - Loads PodcastFillers episodes (audio + metadata + laughter annotations)
+   - Passes audio through Moshi encoder
    - Produces 4096-dimensional features per frame
+   - Generates frame-level binary labels for specified prediction shift
+   - Saves episode-level outputs (features, labels, metadata)
    - Multi-GPU distributed processing via `DistributedOrchestrator`
+   - Supports incremental label generation (features are skipped if already exist)
 
-2. **Label Creation** ([podcast_processing/create_labels.py](src/podcast_processing/create_labels.py)):
-   - Reads laughter event annotations from metadata
-   - Generates frame-level binary labels
-   - Supports prediction intervals (look-ahead windows)
-
-3. **Training** ([laughter_prediction/train.py](src/laughter_prediction/train.py)):
-   - Loads features and labels via `LaughterDataset`
+2. **Training** ([laughter_prediction/train.py](src/laughter_prediction/train.py)):
+   - Loads features and labels from episode-level structure via `LaughterDataset`
    - Trains `LaughterPredictor` (linear or MLP classifier)
    - Multi-GPU training with DistributedDataParallel
    - Supports BCE, Focal Loss, Adaptive Focal Loss
    - Saves checkpoints and logs to TensorBoard
+   - Specify `--shift_frames` to choose which label shift value to train on
 
-4. **Evaluation** ([laughter_prediction/evaluate.py](src/laughter_prediction/evaluate.py)):
+3. **Evaluation** ([laughter_prediction/evaluate.py](src/laughter_prediction/evaluate.py)):
    - Computes precision, recall, F1, AUC
    - Generates confusion matrices
    - Optimizes decision thresholds
@@ -165,11 +172,22 @@ Multi-GPU training uses PyTorch Distributed Data Parallel:
 data/PodcastFillers/           # 50GB dataset
 ├── audio/                     # Episode audio files
 └── metadata/                  # Annotations
-    ├── episode_laughter_prediction_intervals/  # Binary labels for prediction
+    ├── episode_event_speaker_mapping/  # Laughter events with speaker IDs
+    ├── episode_laughter_prediction_intervals/  # (Legacy) Binary labels for prediction
     └── episode_laughter_turns/                 # Original laughter annotations
 
 output/
-├── transformer_outs/          # Extracted features (4096-dim per frame)
+├── laughter/
+│   └── features/              # Episode-level features and labels
+│       ├── train/
+│       │   └── {episode_name}/
+│       │       ├── features_assignment_0.npy  # [T, 4096] features
+│       │       ├── features_assignment_1.npy
+│       │       ├── labels_assignment_0_shift_1.npy  # [T] binary labels
+│       │       ├── labels_assignment_1_shift_1.npy
+│       │       └── metadata_shift_1.json       # Episode info + label stats
+│       ├── validation/
+│       └── test/
 └── laughter_prediction/       # Training outputs (checkpoints, logs, metrics)
 
 models/                        # Pre-trained Moshi models (15GB, downloaded from HF)

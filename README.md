@@ -1,15 +1,15 @@
 # Acoustic Event Prediction
 
-Acoustic event prediction system for detecting laughter in podcast audio using Moshi/Mimi transformer models. This project processes the PodcastFillers dataset to extract audio features and trains binary classifiers to predict laughter events.
+Acoustic event prediction system for detecting laughter in podcast audio using Moshi/Mimi models. This project processes the PodcastFillers dataset to extract audio features and trains binary classifiers to predict laughter events.
 
 ## Features
 
-- **Audio Feature Extraction**: Extract 4096-dimensional features from audio using Moshi/Mimi transformer encoder
+- **Audio Feature Extraction**: Extract 4096-dimensional features from audio using Moshi/Mimi encoder
 - **Multi-GPU Support**: Distributed processing and training with PyTorch DDP
-- **Binary Classification**: Predict laughter events with configurable prediction intervals
+- **Binary Classification**: Predict laughter events with configurable prediction shifts
 - **Multiple Loss Functions**: BCE, Focal Loss, and Adaptive Focal Loss
 - **Comprehensive Evaluation**: Precision, recall, F1-score, AUC-ROC, confusion matrices
-- **Training Variants**: Standard and streaming (iterable) dataset implementations
+- **Episode-Level Storage**: Efficient per-episode storage format
 - **TensorBoard Integration**: Real-time training monitoring and visualization
 
 ## Requirements
@@ -33,21 +33,28 @@ uv sync --extra dev
 
 ## Quick Start
 
-### 1. Feature Extraction
+### 1. Feature Extraction and Label Generation
 
-Extract transformer features from podcast audio:
+Extract features and generate labels from podcast audio:
 
 ```bash
-# Single GPU
-python scripts/compute_transformer_outs.py \
+# Single GPU (default shift: 1 frame)
+python scripts/compute_features.py \
     --dataset_root data/PodcastFillers \
-    --output_root output/transformer_outs
+    --output_root output/laughter/features
 
-# Multi-GPU (8 GPUs recommended)
-torchrun --nproc_per_node=8 scripts/compute_transformer_outs.py \
+# Multi-GPU (8 GPUs recommended) with custom shift value
+torchrun --nproc_per_node=8 scripts/compute_features.py \
     --dataset_root data/PodcastFillers \
-    --output_root output/transformer_outs \
+    --output_root output/laughter/features \
+    --shift_frames 5 \
     --hf_repo kyutai/moshiko-pytorch-bf16
+
+# Generate labels for additional shift values (features will be skipped)
+python scripts/compute_features.py \
+    --dataset_root data/PodcastFillers \
+    --output_root output/laughter/features \
+    --shift_frames 10
 ```
 
 ### 2. Model Training
@@ -55,29 +62,25 @@ torchrun --nproc_per_node=8 scripts/compute_transformer_outs.py \
 Train the laughter prediction classifier:
 
 ```bash
-# Single GPU
+# Single GPU (default shift=1)
 python scripts/train_laughter_predictor.py \
-    --transformer_dir output/transformer_outs \
-    --labels_dir data/PodcastFillers/metadata/episode_laughter_prediction_intervals \
+    --features_dir output/laughter/features \
+    --shift_frames 1 \
     --output_dir output/laughter_prediction \
     --batch_size 512 \
     --learning_rate 1e-4 \
     --epochs 50
 
-# Multi-GPU (4 GPUs)
+# Multi-GPU (4 GPUs) with custom shift value
 torchrun --nproc_per_node=4 scripts/train_laughter_predictor.py \
-    --transformer_dir output/transformer_outs \
-    --labels_dir data/PodcastFillers/metadata/episode_laughter_prediction_intervals \
-    --turns_dir data/PodcastFillers/metadata/episode_laughter_turns \
+    --features_dir output/laughter/features \
+    --shift_frames 5 \
     --output_dir output/laughter_prediction \
     --batch_size 512 \
     --learning_rate 3e-4 \
     --epochs 100 \
     --num_workers 0 \
     --loss_type bce
-
-# Or use the provided script
-./run_train.sh
 ```
 
 ### 3. Monitor Training
@@ -95,7 +98,7 @@ acoustic-event-prediction/
 │   ├── podcast_processing/         # Data preprocessing pipeline
 │   └── laughter_prediction/        # Core prediction module
 ├── scripts/
-│   ├── compute_transformer_outs.py # Feature extraction
+│   ├── compute_features.py # Feature extraction and label generation
 │   └── train_laughter_predictor.py # Model training
 ├── data/                           # PodcastFillers dataset (50GB)
 ├── models/                         # Pre-trained models (15GB)
@@ -107,20 +110,22 @@ See [CLAUDE.md](CLAUDE.md) for detailed architecture documentation.
 
 ## Data Pipeline
 
-1. **Audio Processing**: Load podcast episodes from PodcastFillers dataset
-2. **Feature Extraction**: Pass audio through Moshi transformer encoder → 4096-dim features per frame
-3. **Label Creation**: Generate binary labels from laughter event annotations
-4. **Training**: Train `LaughterPredictor` classifier with multi-GPU DDP
-5. **Evaluation**: Compute metrics and optimize decision thresholds
+1. **Feature Extraction and Label Generation**:
+   - Load podcast episodes from PodcastFillers dataset
+   - Pass audio through Moshi encoder → 4096-dim features per frame
+   - Generate binary labels from laughter annotations with configurable prediction shift
+   - Save episode-level outputs (features, labels, metadata)
+2. **Training**: Train `LaughterPredictor` classifier with multi-GPU DDP
+3. **Evaluation**: Compute metrics and optimize decision thresholds
 
 ## Training Arguments
 
 Key arguments for `train_laughter_predictor.py`:
 
-- `--transformer_dir`: Directory containing extracted features
-- `--labels_dir`: Directory containing binary labels
+- `--features_dir`: Directory containing episode-level features and labels
+- `--shift_frames`: Prediction shift value to use for labels (default: 1)
 - `--output_dir`: Output directory for checkpoints and logs
-- `--batch_size`: Batch size (default: 512)
+- `--batch_size`: Batch size per GPU (default: 512)
 - `--learning_rate`: Learning rate (default: 1e-4)
 - `--epochs`: Number of training epochs (default: 50)
 - `--loss_type`: Loss function - `bce`, `focal`, or `adaptive_focal` (default: bce)
@@ -128,7 +133,7 @@ Key arguments for `train_laughter_predictor.py`:
 
 ## Model Architecture
 
-**LaughterPredictor**: Binary classifier that takes 4096-dimensional transformer features and predicts whether a laughter event will occur in the prediction interval.
+**LaughterPredictor**: Binary classifier that takes 4096-dimensional features and predicts whether a laughter event will occur in the prediction interval.
 
 - **Simple variant** (recommended): Single linear layer
 - **MLP variant**: Linear → ReLU → Dropout → Linear

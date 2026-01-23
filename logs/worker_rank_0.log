@@ -1,0 +1,980 @@
+[Rank 0] 2026-01-23 08:06:41,252 - podcast_processing.distributed_orchestrator - INFO - Rank 0/1 starting
+[Rank 0] 2026-01-23 08:06:41,252 - podcast_processing.distributed_orchestrator - INFO - Dataset root: data/PodcastFillers
+[Rank 0] 2026-01-23 08:06:41,252 - podcast_processing.distributed_orchestrator - INFO - Output root: outputs/features
+[Rank 0] 2026-01-23 08:06:41,252 - podcast_processing.distributed_orchestrator - INFO - Enumerating episodes...
+[Rank 0] 2026-01-23 08:06:41,278 - podcast_processing.dataset_enumerator - INFO - Found 199 episodes across all splits
+[Rank 0] 2026-01-23 08:06:41,278 - podcast_processing.distributed_orchestrator - INFO - Total episodes: 199
+[Rank 0] 2026-01-23 08:06:41,278 - podcast_processing.distributed_orchestrator - INFO - Rank 0 processing episodes 0-198 (199 total)
+[Rank 0] 2026-01-23 08:06:41,278 - podcast_processing.distributed_orchestrator - INFO - Loading models...
+[Rank 0] 2026-01-23 08:07:04,281 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): huggingface.co:443
+[Rank 0] 2026-01-23 08:07:04,569 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /kyutai/moshiko-pytorch-bf16/resolve/main/tokenizer_spm_32k_3.model HTTP/1.1" 302 0
+[Rank 0] 2026-01-23 08:07:04,571 - filelock - DEBUG - Attempting to acquire lock 138664608061280 on /home/vscode/.cache/huggingface/hub/.locks/models--kyutai--moshiko-pytorch-bf16/78d4336533ddc26f9acf7250d7fb83492152196c6ea4212c841df76933f18d2d.lock
+[Rank 0] 2026-01-23 08:07:04,571 - filelock - DEBUG - Lock 138664608061280 acquired on /home/vscode/.cache/huggingface/hub/.locks/models--kyutai--moshiko-pytorch-bf16/78d4336533ddc26f9acf7250d7fb83492152196c6ea4212c841df76933f18d2d.lock
+[Rank 0] 2026-01-23 08:07:04,760 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/kyutai/moshiko-pytorch-bf16/xet-read-token/2bfc9ae6e89079a5cc7ed2a68436010d91a3d289 HTTP/1.1" 200 365
+[Rank 0] 2026-01-23 08:07:06,064 - filelock - DEBUG - Attempting to release lock 138664608061280 on /home/vscode/.cache/huggingface/hub/.locks/models--kyutai--moshiko-pytorch-bf16/78d4336533ddc26f9acf7250d7fb83492152196c6ea4212c841df76933f18d2d.lock
+[Rank 0] 2026-01-23 08:07:06,064 - filelock - DEBUG - Lock 138664608061280 released on /home/vscode/.cache/huggingface/hub/.locks/models--kyutai--moshiko-pytorch-bf16/78d4336533ddc26f9acf7250d7fb83492152196c6ea4212c841df76933f18d2d.lock
+[Rank 0] 2026-01-23 08:07:14,727 - podcast_processing.distributed_orchestrator - INFO - Loading tokenizer...
+[Rank 0] 2026-01-23 08:07:14,766 - podcast_processing.distributed_orchestrator - INFO - Models loaded on cuda:0
+[Rank 0] 2026-01-23 08:07:14,771 - podcast_processing.episode_processor - INFO - Processing episode: All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef
+[Rank 0] 2026-01-23 08:07:14,778 - podcast_processing.label_generator - DEBUG - Loaded 2 laughter events from data/PodcastFillers/metadata/episode_event_speaker_mapping/train/All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef.json
+[Rank 0] 2026-01-23 08:07:14,779 - podcast_processing.episode_processor - INFO - Top speakers: SPEAKER_00 (longer), SPEAKER_01 (shorter)
+[Rank 0] 2026-01-23 08:07:14,872 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [169.06, 169.24], using fallback
+[Rank 0] 2026-01-23 08:07:14,872 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [169.33, 169.60], using fallback
+[Rank 0] 2026-01-23 08:07:15,075 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [615.71, 615.71], using fallback
+[Rank 0] 2026-01-23 08:07:15,371 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [1229.50, 1229.50], using fallback
+[Rank 0] 2026-01-23 08:07:15,637 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [1787.19, 1787.28], using fallback
+[Rank 0] 2026-01-23 08:07:15,934 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2404.47, 2404.47], using fallback
+[Rank 0] 2026-01-23 08:07:16,479 - podcast_processing.alignment_merger - INFO - Created 9911 word alignments
+[Rank 0] 2026-01-23 08:07:17,613 - podcast_processing.episode_processor - DEBUG - Loaded SPEAKER_00: torch.Size([1, 81931704]), SPEAKER_01: torch.Size([1, 81931704])
+[Rank 0] 2026-01-23 08:07:17,613 - podcast_processing.episode_processor - INFO - Episode duration: 3413.82s
+[Rank 0] 2026-01-23 08:07:17,613 - podcast_processing.episode_processor - INFO - Processing Assignment 0
+[Rank 0] 2026-01-23 08:07:17,614 - podcast_processing.episode_processor - INFO - Audio is 3413.8s, splitting into chunks for processing
+[Rank 0] 2026-01-23 08:07:17,614 - podcast_processing.episode_processor - INFO - Processing 3413.8s audio in 17 chunks of 210s each
+[Rank 0] 2026-01-23 08:07:17,614 - podcast_processing.episode_processor - INFO -   Processing chunk 1/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:23,607 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:23,607 - podcast_processing.episode_processor - DEBUG - System speaker has 335 words
+[Rank 0] 2026-01-23 08:07:23,653 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:23,653 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:23,653 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:23,654 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:27,319 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:27,349 - podcast_processing.episode_processor - INFO -   Processing chunk 2/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:27,431 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:27,431 - podcast_processing.episode_processor - DEBUG - System speaker has 123 words
+[Rank 0] 2026-01-23 08:07:27,478 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:27,478 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:27,478 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:27,479 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:27,504 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:27,597 - podcast_processing.episode_processor - INFO -   Processing chunk 3/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:27,679 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:27,679 - podcast_processing.episode_processor - DEBUG - System speaker has 373 words
+[Rank 0] 2026-01-23 08:07:27,726 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:27,726 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:27,726 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:27,727 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:27,752 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:27,846 - podcast_processing.episode_processor - INFO -   Processing chunk 4/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:27,927 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:27,927 - podcast_processing.episode_processor - DEBUG - System speaker has 379 words
+[Rank 0] 2026-01-23 08:07:27,974 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:27,975 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:27,975 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:27,975 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:28,000 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:28,095 - podcast_processing.episode_processor - INFO -   Processing chunk 5/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:28,176 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:28,176 - podcast_processing.episode_processor - DEBUG - System speaker has 254 words
+[Rank 0] 2026-01-23 08:07:28,224 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:28,224 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:28,224 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:28,224 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:28,249 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:28,344 - podcast_processing.episode_processor - INFO -   Processing chunk 6/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:28,425 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:28,425 - podcast_processing.episode_processor - DEBUG - System speaker has 52 words
+[Rank 0] 2026-01-23 08:07:28,472 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:28,472 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:28,472 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:28,473 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:28,498 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:28,591 - podcast_processing.episode_processor - INFO -   Processing chunk 7/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:28,672 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:28,672 - podcast_processing.episode_processor - DEBUG - System speaker has 216 words
+[Rank 0] 2026-01-23 08:07:28,719 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:28,720 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:28,720 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:28,720 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:28,745 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:28,839 - podcast_processing.episode_processor - INFO -   Processing chunk 8/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:28,920 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:28,920 - podcast_processing.episode_processor - DEBUG - System speaker has 128 words
+[Rank 0] 2026-01-23 08:07:28,968 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:28,968 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:28,968 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:28,968 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:28,993 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:29,087 - podcast_processing.episode_processor - INFO -   Processing chunk 9/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:29,168 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:29,168 - podcast_processing.episode_processor - DEBUG - System speaker has 557 words
+[Rank 0] 2026-01-23 08:07:29,215 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:29,215 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:29,215 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:29,216 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:29,241 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:29,335 - podcast_processing.episode_processor - INFO -   Processing chunk 10/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:29,416 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:29,416 - podcast_processing.episode_processor - DEBUG - System speaker has 99 words
+[Rank 0] 2026-01-23 08:07:29,463 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:29,463 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:29,464 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:29,464 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:29,489 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:29,583 - podcast_processing.episode_processor - INFO -   Processing chunk 11/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:29,663 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:29,663 - podcast_processing.episode_processor - DEBUG - System speaker has 144 words
+[Rank 0] 2026-01-23 08:07:29,711 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:29,711 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:29,711 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:29,711 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:29,736 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:29,830 - podcast_processing.episode_processor - INFO -   Processing chunk 12/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:29,911 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:29,911 - podcast_processing.episode_processor - DEBUG - System speaker has 328 words
+[Rank 0] 2026-01-23 08:07:29,959 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:29,959 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:29,959 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:29,959 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:29,984 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:30,078 - podcast_processing.episode_processor - INFO -   Processing chunk 13/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:30,159 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:30,159 - podcast_processing.episode_processor - DEBUG - System speaker has 160 words
+[Rank 0] 2026-01-23 08:07:30,207 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:30,207 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:30,207 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:30,207 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:30,232 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:30,327 - podcast_processing.episode_processor - INFO -   Processing chunk 14/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:30,408 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:30,408 - podcast_processing.episode_processor - DEBUG - System speaker has 39 words
+[Rank 0] 2026-01-23 08:07:30,455 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:30,455 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:30,455 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:30,456 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:30,481 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:30,575 - podcast_processing.episode_processor - INFO -   Processing chunk 15/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:30,656 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:30,656 - podcast_processing.episode_processor - DEBUG - System speaker has 224 words
+[Rank 0] 2026-01-23 08:07:30,703 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:30,703 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:30,703 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:30,704 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:30,729 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:30,823 - podcast_processing.episode_processor - INFO -   Processing chunk 16/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:30,903 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:30,903 - podcast_processing.episode_processor - DEBUG - System speaker has 238 words
+[Rank 0] 2026-01-23 08:07:30,951 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:30,951 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:30,951 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:30,952 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:30,976 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:31,071 - podcast_processing.episode_processor - INFO -   Processing chunk 17/17 (53.8s)
+[Rank 0] 2026-01-23 08:07:33,037 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 673]), System codes shape: torch.Size([1, 8, 673])
+[Rank 0] 2026-01-23 08:07:33,037 - podcast_processing.episode_processor - DEBUG - System speaker has 126 words
+[Rank 0] 2026-01-23 08:07:33,040 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 673])
+[Rank 0] 2026-01-23 08:07:33,040 - podcast_processing.episode_processor - DEBUG - Padded to max_t=673
+[Rank 0] 2026-01-23 08:07:33,040 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 673]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:33,041 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 674])
+[Rank 0] 2026-01-23 08:07:33,904 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 673, 4096])
+[Rank 0] 2026-01-23 08:07:33,929 - podcast_processing.episode_processor - INFO - Combined 17 chunks into final output shape: torch.Size([42673, 4096])
+[Rank 0] 2026-01-23 08:07:33,941 - podcast_processing.distributed_orchestrator - ERROR - ✗ All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef: TypeError: Got unsupported ScalarType BFloat16
+Traceback (most recent call last):
+  File "/workspaces/acoustic-event-prediction/src/podcast_processing/distributed_orchestrator.py", line 155, in run
+    processor.process_episode(
+  File "/workspaces/acoustic-event-prediction/src/podcast_processing/episode_processor.py", line 140, in process_episode
+    writer.save_features(assign_idx, features)
+  File "/workspaces/acoustic-event-prediction/src/podcast_processing/episode_output_writer.py", line 51, in save_features
+    np.save(path, features.cpu().numpy().astype(np.float32))
+                  ^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Got unsupported ScalarType BFloat16
+[Rank 0] 2026-01-23 08:07:33,983 - podcast_processing.episode_processor - INFO - Processing episode: All The Fly Kids_Episode 125 The "End is Near" Episode with Geronimo Knows and Chelle B.
+[Rank 0] 2026-01-23 08:07:33,988 - podcast_processing.label_generator - DEBUG - Loaded 82 laughter events from data/PodcastFillers/metadata/episode_event_speaker_mapping/train/All The Fly Kids_Episode 125 The "End is Near" Episode with Geronimo Knows and Chelle B..json
+[Rank 0] 2026-01-23 08:07:33,990 - podcast_processing.episode_processor - INFO - Top speakers: SPEAKER_01 (longer), SPEAKER_02 (shorter)
+[Rank 0] 2026-01-23 08:07:34,181 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [250.04, 250.22], using fallback
+[Rank 0] 2026-01-23 08:07:34,236 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [329.72, 329.72], using fallback
+[Rank 0] 2026-01-23 08:07:34,243 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [335.96, 335.96], using fallback
+[Rank 0] 2026-01-23 08:07:34,517 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [764.02, 764.21], using fallback
+[Rank 0] 2026-01-23 08:07:35,115 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [1598.07, 1598.58], using fallback
+[Rank 0] 2026-01-23 08:07:35,285 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [1824.30, 1824.57], using fallback
+[Rank 0] 2026-01-23 08:07:35,595 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2245.80, 2246.28], using fallback
+[Rank 0] 2026-01-23 08:07:35,995 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2796.26, 2796.46], using fallback
+[Rank 0] 2026-01-23 08:07:36,264 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [3153.18, 3153.66], using fallback
+[Rank 0] 2026-01-23 08:07:36,265 - podcast_processing.alignment_merger - INFO - Created 9029 word alignments
+[Rank 0] 2026-01-23 08:07:37,331 - podcast_processing.episode_processor - DEBUG - Loaded SPEAKER_01: torch.Size([1, 75733184]), SPEAKER_02: torch.Size([1, 75733184])
+[Rank 0] 2026-01-23 08:07:37,331 - podcast_processing.episode_processor - INFO - Episode duration: 3155.55s
+[Rank 0] 2026-01-23 08:07:37,331 - podcast_processing.episode_processor - INFO - Processing Assignment 0
+[Rank 0] 2026-01-23 08:07:37,332 - podcast_processing.episode_processor - INFO - Audio is 3155.5s, splitting into chunks for processing
+[Rank 0] 2026-01-23 08:07:37,332 - podcast_processing.episode_processor - INFO - Processing 3155.5s audio in 16 chunks of 210s each
+[Rank 0] 2026-01-23 08:07:37,332 - podcast_processing.episode_processor - INFO -   Processing chunk 1/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:37,414 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:37,415 - podcast_processing.episode_processor - DEBUG - System speaker has 255 words
+[Rank 0] 2026-01-23 08:07:37,461 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:37,461 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:37,461 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:37,462 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:37,488 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:37,580 - podcast_processing.episode_processor - INFO -   Processing chunk 2/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:37,662 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:37,663 - podcast_processing.episode_processor - DEBUG - System speaker has 480 words
+[Rank 0] 2026-01-23 08:07:37,709 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:37,710 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:37,710 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:37,710 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:37,737 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:37,828 - podcast_processing.episode_processor - INFO -   Processing chunk 3/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:37,910 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:37,910 - podcast_processing.episode_processor - DEBUG - System speaker has 348 words
+[Rank 0] 2026-01-23 08:07:37,957 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:37,957 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:37,957 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:37,958 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:37,984 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:38,077 - podcast_processing.episode_processor - INFO -   Processing chunk 4/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:38,159 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:38,159 - podcast_processing.episode_processor - DEBUG - System speaker has 121 words
+[Rank 0] 2026-01-23 08:07:38,206 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:38,206 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:38,206 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:38,206 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:38,233 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:38,325 - podcast_processing.episode_processor - INFO -   Processing chunk 5/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:38,406 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:38,406 - podcast_processing.episode_processor - DEBUG - System speaker has 268 words
+[Rank 0] 2026-01-23 08:07:38,453 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:38,454 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:38,454 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:38,454 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:38,480 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:38,573 - podcast_processing.episode_processor - INFO -   Processing chunk 6/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:38,655 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:38,655 - podcast_processing.episode_processor - DEBUG - System speaker has 380 words
+[Rank 0] 2026-01-23 08:07:38,702 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:38,702 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:38,702 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:38,703 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:38,729 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:38,822 - podcast_processing.episode_processor - INFO -   Processing chunk 7/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:38,903 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:38,903 - podcast_processing.episode_processor - DEBUG - System speaker has 247 words
+[Rank 0] 2026-01-23 08:07:38,951 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:38,951 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:38,951 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:38,952 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:38,978 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:39,070 - podcast_processing.episode_processor - INFO -   Processing chunk 8/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:39,152 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:39,152 - podcast_processing.episode_processor - DEBUG - System speaker has 447 words
+[Rank 0] 2026-01-23 08:07:39,199 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:39,199 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:39,199 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:39,200 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:39,226 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:39,319 - podcast_processing.episode_processor - INFO -   Processing chunk 9/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:39,400 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:39,400 - podcast_processing.episode_processor - DEBUG - System speaker has 451 words
+[Rank 0] 2026-01-23 08:07:39,447 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:39,447 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:39,447 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:39,448 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:39,474 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:39,567 - podcast_processing.episode_processor - INFO -   Processing chunk 10/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:39,648 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:39,649 - podcast_processing.episode_processor - DEBUG - System speaker has 355 words
+[Rank 0] 2026-01-23 08:07:39,696 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:39,696 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:39,696 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:39,696 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:39,722 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:39,816 - podcast_processing.episode_processor - INFO -   Processing chunk 11/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:39,897 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:39,897 - podcast_processing.episode_processor - DEBUG - System speaker has 241 words
+[Rank 0] 2026-01-23 08:07:39,944 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:39,944 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:39,944 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:39,945 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:39,971 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:40,064 - podcast_processing.episode_processor - INFO -   Processing chunk 12/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:40,145 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:40,146 - podcast_processing.episode_processor - DEBUG - System speaker has 276 words
+[Rank 0] 2026-01-23 08:07:40,192 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:40,193 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:40,193 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:40,193 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:40,219 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:40,312 - podcast_processing.episode_processor - INFO -   Processing chunk 13/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:40,394 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:40,394 - podcast_processing.episode_processor - DEBUG - System speaker has 148 words
+[Rank 0] 2026-01-23 08:07:40,441 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:40,441 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:40,441 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:40,442 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:40,468 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:40,560 - podcast_processing.episode_processor - INFO -   Processing chunk 14/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:40,641 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:40,641 - podcast_processing.episode_processor - DEBUG - System speaker has 252 words
+[Rank 0] 2026-01-23 08:07:40,688 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:40,688 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:40,689 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:40,689 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:40,715 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:40,808 - podcast_processing.episode_processor - INFO -   Processing chunk 15/16 (210.0s)
+[Rank 0] 2026-01-23 08:07:40,890 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:40,890 - podcast_processing.episode_processor - DEBUG - System speaker has 117 words
+[Rank 0] 2026-01-23 08:07:40,937 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:40,937 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:40,937 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:40,938 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:40,964 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:41,056 - podcast_processing.episode_processor - INFO -   Processing chunk 16/16 (5.5s)
+[Rank 0] 2026-01-23 08:07:41,102 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 70]), System codes shape: torch.Size([1, 8, 70])
+[Rank 0] 2026-01-23 08:07:41,102 - podcast_processing.episode_processor - DEBUG - System speaker has 0 words
+[Rank 0] 2026-01-23 08:07:41,103 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 70])
+[Rank 0] 2026-01-23 08:07:41,103 - podcast_processing.episode_processor - DEBUG - Padded to max_t=70
+[Rank 0] 2026-01-23 08:07:41,103 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 70]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:41,103 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 71])
+[Rank 0] 2026-01-23 08:07:41,144 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 70, 4096])
+[Rank 0] 2026-01-23 08:07:41,163 - podcast_processing.episode_processor - INFO - Combined 16 chunks into final output shape: torch.Size([39445, 4096])
+[Rank 0] 2026-01-23 08:07:41,164 - podcast_processing.distributed_orchestrator - ERROR - ✗ All The Fly Kids_Episode 125 The "End is Near" Episode with Geronimo Knows and Chelle B.: TypeError: Got unsupported ScalarType BFloat16
+Traceback (most recent call last):
+  File "/workspaces/acoustic-event-prediction/src/podcast_processing/distributed_orchestrator.py", line 155, in run
+    processor.process_episode(
+  File "/workspaces/acoustic-event-prediction/src/podcast_processing/episode_processor.py", line 140, in process_episode
+    writer.save_features(assign_idx, features)
+  File "/workspaces/acoustic-event-prediction/src/podcast_processing/episode_output_writer.py", line 51, in save_features
+    np.save(path, features.cpu().numpy().astype(np.float32))
+                  ^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Got unsupported ScalarType BFloat16
+[Rank 0] 2026-01-23 08:07:41,206 - podcast_processing.episode_processor - INFO - Processing episode: All The Fly Kids_Episode 64 "Places and Spaces I've Been" with Timothy Anne Burnside of the Smithsonian NMAAHC
+[Rank 0] 2026-01-23 08:07:41,213 - podcast_processing.label_generator - DEBUG - Loaded 96 laughter events from data/PodcastFillers/metadata/episode_event_speaker_mapping/train/All The Fly Kids_Episode 64 "Places and Spaces I've Been" with Timothy Anne Burnside of the Smithsonian NMAAHC.json
+[Rank 0] 2026-01-23 08:07:41,215 - podcast_processing.episode_processor - INFO - Top speakers: SPEAKER_00 (longer), SPEAKER_03 (shorter)
+[Rank 0] 2026-01-23 08:07:42,341 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [1454.73, 1454.73], using fallback
+[Rank 0] 2026-01-23 08:07:42,709 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [1989.69, 1989.96], using fallback
+[Rank 0] 2026-01-23 08:07:42,888 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2231.01, 2231.28], using fallback
+[Rank 0] 2026-01-23 08:07:43,030 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2450.16, 2450.22], using fallback
+[Rank 0] 2026-01-23 08:07:43,257 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2728.90, 2729.14], using fallback
+[Rank 0] 2026-01-23 08:07:43,313 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2811.16, 2811.25], using fallback
+[Rank 0] 2026-01-23 08:07:43,314 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2811.48, 2811.67], using fallback
+[Rank 0] 2026-01-23 08:07:43,314 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2811.70, 2811.88], using fallback
+[Rank 0] 2026-01-23 08:07:43,345 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2871.15, 2871.39], using fallback
+[Rank 0] 2026-01-23 08:07:43,347 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2875.71, 2875.77], using fallback
+[Rank 0] 2026-01-23 08:07:43,370 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2918.46, 2918.64], using fallback
+[Rank 0] 2026-01-23 08:07:43,662 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [3313.20, 3313.38], using fallback
+[Rank 0] 2026-01-23 08:07:43,663 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [3313.41, 3313.83], using fallback
+[Rank 0] 2026-01-23 08:07:43,754 - podcast_processing.alignment_merger - INFO - Created 10249 word alignments
+[Rank 0] 2026-01-23 08:07:44,909 - podcast_processing.episode_processor - DEBUG - Loaded SPEAKER_00: torch.Size([1, 82916272]), SPEAKER_03: torch.Size([1, 82916272])
+[Rank 0] 2026-01-23 08:07:44,909 - podcast_processing.episode_processor - INFO - Episode duration: 3454.84s
+[Rank 0] 2026-01-23 08:07:44,909 - podcast_processing.episode_processor - INFO - Processing Assignment 0
+[Rank 0] 2026-01-23 08:07:44,910 - podcast_processing.episode_processor - INFO - Audio is 3454.8s, splitting into chunks for processing
+[Rank 0] 2026-01-23 08:07:44,910 - podcast_processing.episode_processor - INFO - Processing 3454.8s audio in 17 chunks of 210s each
+[Rank 0] 2026-01-23 08:07:44,910 - podcast_processing.episode_processor - INFO -   Processing chunk 1/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:44,992 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:44,992 - podcast_processing.episode_processor - DEBUG - System speaker has 450 words
+[Rank 0] 2026-01-23 08:07:45,038 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:45,038 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:45,038 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:45,039 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:45,066 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:45,145 - podcast_processing.episode_processor - INFO -   Processing chunk 2/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:45,227 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:45,227 - podcast_processing.episode_processor - DEBUG - System speaker has 294 words
+[Rank 0] 2026-01-23 08:07:45,274 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:45,274 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:45,274 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:45,275 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:45,301 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:45,382 - podcast_processing.episode_processor - INFO -   Processing chunk 3/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:45,464 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:45,464 - podcast_processing.episode_processor - DEBUG - System speaker has 125 words
+[Rank 0] 2026-01-23 08:07:45,511 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:45,511 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:45,511 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:45,511 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:45,537 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:45,619 - podcast_processing.episode_processor - INFO -   Processing chunk 4/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:45,700 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:45,700 - podcast_processing.episode_processor - DEBUG - System speaker has 253 words
+[Rank 0] 2026-01-23 08:07:45,747 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:45,748 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:45,748 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:45,748 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:45,774 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:45,855 - podcast_processing.episode_processor - INFO -   Processing chunk 5/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:45,937 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:45,937 - podcast_processing.episode_processor - DEBUG - System speaker has 121 words
+[Rank 0] 2026-01-23 08:07:45,984 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:45,984 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:45,985 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:45,985 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:46,011 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:46,092 - podcast_processing.episode_processor - INFO -   Processing chunk 6/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:46,173 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:46,173 - podcast_processing.episode_processor - DEBUG - System speaker has 142 words
+[Rank 0] 2026-01-23 08:07:46,220 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:46,220 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:46,220 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:46,221 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:46,247 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:46,339 - podcast_processing.episode_processor - INFO -   Processing chunk 7/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:46,420 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:46,420 - podcast_processing.episode_processor - DEBUG - System speaker has 119 words
+[Rank 0] 2026-01-23 08:07:46,467 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:46,468 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:46,468 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:46,468 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:46,494 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:46,586 - podcast_processing.episode_processor - INFO -   Processing chunk 8/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:46,667 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:46,667 - podcast_processing.episode_processor - DEBUG - System speaker has 77 words
+[Rank 0] 2026-01-23 08:07:46,714 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:46,714 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:46,714 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:46,715 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:46,741 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:46,833 - podcast_processing.episode_processor - INFO -   Processing chunk 9/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:46,914 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:46,914 - podcast_processing.episode_processor - DEBUG - System speaker has 92 words
+[Rank 0] 2026-01-23 08:07:46,962 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:46,962 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:46,962 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:46,962 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:46,988 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:47,080 - podcast_processing.episode_processor - INFO -   Processing chunk 10/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:47,161 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:47,161 - podcast_processing.episode_processor - DEBUG - System speaker has 22 words
+[Rank 0] 2026-01-23 08:07:47,208 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:47,208 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:47,208 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:47,209 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:47,235 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:47,327 - podcast_processing.episode_processor - INFO -   Processing chunk 11/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:47,408 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:47,408 - podcast_processing.episode_processor - DEBUG - System speaker has 194 words
+[Rank 0] 2026-01-23 08:07:47,455 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:47,455 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:47,455 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:47,455 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:47,482 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:47,573 - podcast_processing.episode_processor - INFO -   Processing chunk 12/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:47,654 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:47,654 - podcast_processing.episode_processor - DEBUG - System speaker has 55 words
+[Rank 0] 2026-01-23 08:07:47,701 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:47,701 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:47,701 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:47,702 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:47,728 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:47,821 - podcast_processing.episode_processor - INFO -   Processing chunk 13/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:47,902 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:47,902 - podcast_processing.episode_processor - DEBUG - System speaker has 142 words
+[Rank 0] 2026-01-23 08:07:47,949 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:47,949 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:47,949 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:47,950 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:47,976 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:48,068 - podcast_processing.episode_processor - INFO -   Processing chunk 14/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:48,148 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:48,148 - podcast_processing.episode_processor - DEBUG - System speaker has 114 words
+[Rank 0] 2026-01-23 08:07:48,195 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:48,196 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:48,196 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:48,196 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:48,222 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:48,315 - podcast_processing.episode_processor - INFO -   Processing chunk 15/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:48,396 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:48,396 - podcast_processing.episode_processor - DEBUG - System speaker has 228 words
+[Rank 0] 2026-01-23 08:07:48,443 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:48,443 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:48,443 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:48,444 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:48,470 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:48,563 - podcast_processing.episode_processor - INFO -   Processing chunk 16/17 (210.0s)
+[Rank 0] 2026-01-23 08:07:48,643 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:07:48,643 - podcast_processing.episode_processor - DEBUG - System speaker has 91 words
+[Rank 0] 2026-01-23 08:07:48,690 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:07:48,690 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:07:48,691 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:48,691 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:07:48,717 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:07:48,809 - podcast_processing.episode_processor - INFO -   Processing chunk 17/17 (94.8s)
+[Rank 0] 2026-01-23 08:07:48,869 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 1186]), System codes shape: torch.Size([1, 8, 1186])
+[Rank 0] 2026-01-23 08:07:48,869 - podcast_processing.episode_processor - DEBUG - System speaker has 39 words
+[Rank 0] 2026-01-23 08:07:48,882 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 1186])
+[Rank 0] 2026-01-23 08:07:48,882 - podcast_processing.episode_processor - DEBUG - Padded to max_t=1186
+[Rank 0] 2026-01-23 08:07:48,882 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 1186]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:07:48,882 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 1187])
+[Rank 0] 2026-01-23 08:07:48,918 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 1186, 4096])
+[Rank 0] 2026-01-23 08:07:48,949 - podcast_processing.episode_processor - INFO - Combined 17 chunks into final output shape: torch.Size([43186, 4096])
+[Rank 0] 2026-01-23 08:07:48,950 - podcast_processing.distributed_orchestrator - ERROR - ✗ All The Fly Kids_Episode 64 "Places and Spaces I've Been" with Timothy Anne Burnside of the Smithsonian NMAAHC: TypeError: Got unsupported ScalarType BFloat16
+Traceback (most recent call last):
+  File "/workspaces/acoustic-event-prediction/src/podcast_processing/distributed_orchestrator.py", line 155, in run
+    processor.process_episode(
+  File "/workspaces/acoustic-event-prediction/src/podcast_processing/episode_processor.py", line 140, in process_episode
+    writer.save_features(assign_idx, features)
+  File "/workspaces/acoustic-event-prediction/src/podcast_processing/episode_output_writer.py", line 51, in save_features
+    np.save(path, features.cpu().numpy().astype(np.float32))
+                  ^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Got unsupported ScalarType BFloat16
+[Rank 0] 2026-01-23 08:08:17,388 - podcast_processing.distributed_orchestrator - INFO - Rank 0/1 starting
+[Rank 0] 2026-01-23 08:08:17,388 - podcast_processing.distributed_orchestrator - INFO - Dataset root: data/PodcastFillers
+[Rank 0] 2026-01-23 08:08:17,388 - podcast_processing.distributed_orchestrator - INFO - Output root: outputs/features
+[Rank 0] 2026-01-23 08:08:17,388 - podcast_processing.distributed_orchestrator - INFO - Enumerating episodes...
+[Rank 0] 2026-01-23 08:08:17,415 - podcast_processing.dataset_enumerator - INFO - Found 199 episodes across all splits
+[Rank 0] 2026-01-23 08:08:17,415 - podcast_processing.distributed_orchestrator - INFO - Total episodes: 199
+[Rank 0] 2026-01-23 08:08:17,415 - podcast_processing.distributed_orchestrator - INFO - Rank 0 processing episodes 0-198 (199 total)
+[Rank 0] 2026-01-23 08:08:17,415 - podcast_processing.distributed_orchestrator - INFO - Loading models...
+[Rank 0] 2026-01-23 08:08:40,424 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): huggingface.co:443
+[Rank 0] 2026-01-23 08:08:40,644 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /kyutai/moshiko-pytorch-bf16/resolve/main/tokenizer_spm_32k_3.model HTTP/1.1" 302 0
+[Rank 0] 2026-01-23 08:08:47,029 - podcast_processing.distributed_orchestrator - INFO - Loading tokenizer...
+[Rank 0] 2026-01-23 08:08:47,069 - podcast_processing.distributed_orchestrator - INFO - Models loaded on cuda:0
+[Rank 0] 2026-01-23 08:08:47,073 - podcast_processing.episode_processor - INFO - Processing episode: All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef
+[Rank 0] 2026-01-23 08:08:47,077 - podcast_processing.label_generator - DEBUG - Loaded 2 laughter events from data/PodcastFillers/metadata/episode_event_speaker_mapping/train/All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef.json
+[Rank 0] 2026-01-23 08:08:47,078 - podcast_processing.episode_processor - INFO - Top speakers: SPEAKER_00 (longer), SPEAKER_01 (shorter)
+[Rank 0] 2026-01-23 08:08:47,167 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [169.06, 169.24], using fallback
+[Rank 0] 2026-01-23 08:08:47,167 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [169.33, 169.60], using fallback
+[Rank 0] 2026-01-23 08:08:47,369 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [615.71, 615.71], using fallback
+[Rank 0] 2026-01-23 08:08:47,665 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [1229.50, 1229.50], using fallback
+[Rank 0] 2026-01-23 08:08:47,927 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [1787.19, 1787.28], using fallback
+[Rank 0] 2026-01-23 08:08:48,226 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2404.47, 2404.47], using fallback
+[Rank 0] 2026-01-23 08:08:48,769 - podcast_processing.alignment_merger - INFO - Created 9911 word alignments
+[Rank 0] 2026-01-23 08:08:49,550 - podcast_processing.episode_processor - DEBUG - Loaded SPEAKER_00: torch.Size([1, 81931704]), SPEAKER_01: torch.Size([1, 81931704])
+[Rank 0] 2026-01-23 08:08:49,550 - podcast_processing.episode_processor - INFO - Episode duration: 3413.82s
+[Rank 0] 2026-01-23 08:08:49,550 - podcast_processing.episode_processor - INFO - Processing Assignment 0
+[Rank 0] 2026-01-23 08:08:49,550 - podcast_processing.episode_processor - INFO - Audio is 3413.8s, splitting into chunks for processing
+[Rank 0] 2026-01-23 08:08:49,550 - podcast_processing.episode_processor - INFO - Processing 3413.8s audio in 17 chunks of 210s each
+[Rank 0] 2026-01-23 08:08:49,550 - podcast_processing.episode_processor - INFO -   Processing chunk 1/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:52,130 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:52,130 - podcast_processing.episode_processor - DEBUG - System speaker has 335 words
+[Rank 0] 2026-01-23 08:08:52,174 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:52,174 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:52,174 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:52,175 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:53,858 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:53,890 - podcast_processing.episode_processor - INFO -   Processing chunk 2/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:53,972 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:53,972 - podcast_processing.episode_processor - DEBUG - System speaker has 123 words
+[Rank 0] 2026-01-23 08:08:54,019 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:54,020 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:54,020 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:54,020 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:54,047 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:54,141 - podcast_processing.episode_processor - INFO -   Processing chunk 3/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:54,224 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:54,224 - podcast_processing.episode_processor - DEBUG - System speaker has 373 words
+[Rank 0] 2026-01-23 08:08:54,270 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:54,271 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:54,271 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:54,271 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:54,299 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:54,391 - podcast_processing.episode_processor - INFO -   Processing chunk 4/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:54,474 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:54,474 - podcast_processing.episode_processor - DEBUG - System speaker has 379 words
+[Rank 0] 2026-01-23 08:08:54,521 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:54,521 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:54,521 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:54,522 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:54,547 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:54,645 - podcast_processing.episode_processor - INFO -   Processing chunk 5/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:54,731 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:54,731 - podcast_processing.episode_processor - DEBUG - System speaker has 254 words
+[Rank 0] 2026-01-23 08:08:54,779 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:54,779 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:54,779 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:54,779 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:54,805 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:54,903 - podcast_processing.episode_processor - INFO -   Processing chunk 6/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:54,994 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:54,994 - podcast_processing.episode_processor - DEBUG - System speaker has 52 words
+[Rank 0] 2026-01-23 08:08:55,041 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:55,041 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:55,041 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:55,042 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:55,067 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:55,161 - podcast_processing.episode_processor - INFO -   Processing chunk 7/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:55,255 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:55,255 - podcast_processing.episode_processor - DEBUG - System speaker has 216 words
+[Rank 0] 2026-01-23 08:08:55,303 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:55,303 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:55,303 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:55,303 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:55,329 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:55,423 - podcast_processing.episode_processor - INFO -   Processing chunk 8/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:55,515 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:55,515 - podcast_processing.episode_processor - DEBUG - System speaker has 128 words
+[Rank 0] 2026-01-23 08:08:55,562 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:55,562 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:55,562 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:55,563 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:55,588 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:55,683 - podcast_processing.episode_processor - INFO -   Processing chunk 9/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:55,774 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:55,774 - podcast_processing.episode_processor - DEBUG - System speaker has 557 words
+[Rank 0] 2026-01-23 08:08:55,821 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:55,822 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:55,822 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:55,822 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:55,849 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:55,942 - podcast_processing.episode_processor - INFO -   Processing chunk 10/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:56,033 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:56,033 - podcast_processing.episode_processor - DEBUG - System speaker has 99 words
+[Rank 0] 2026-01-23 08:08:56,080 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:56,080 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:56,080 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:56,081 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:56,107 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:56,201 - podcast_processing.episode_processor - INFO -   Processing chunk 11/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:56,291 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:56,292 - podcast_processing.episode_processor - DEBUG - System speaker has 144 words
+[Rank 0] 2026-01-23 08:08:56,339 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:56,339 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:56,339 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:56,339 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:56,367 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:56,471 - podcast_processing.episode_processor - INFO -   Processing chunk 12/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:56,562 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:56,562 - podcast_processing.episode_processor - DEBUG - System speaker has 328 words
+[Rank 0] 2026-01-23 08:08:56,609 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:56,610 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:56,610 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:56,610 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:56,636 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:56,732 - podcast_processing.episode_processor - INFO -   Processing chunk 13/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:56,823 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:56,823 - podcast_processing.episode_processor - DEBUG - System speaker has 160 words
+[Rank 0] 2026-01-23 08:08:56,870 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:56,871 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:56,871 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:56,871 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:56,896 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:56,991 - podcast_processing.episode_processor - INFO -   Processing chunk 14/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:57,085 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:57,085 - podcast_processing.episode_processor - DEBUG - System speaker has 39 words
+[Rank 0] 2026-01-23 08:08:57,132 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:57,132 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:57,132 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:57,133 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:57,158 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:57,252 - podcast_processing.episode_processor - INFO -   Processing chunk 15/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:57,347 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:57,347 - podcast_processing.episode_processor - DEBUG - System speaker has 224 words
+[Rank 0] 2026-01-23 08:08:57,394 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:57,394 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:57,394 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:57,395 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:57,421 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:57,514 - podcast_processing.episode_processor - INFO -   Processing chunk 16/17 (210.0s)
+[Rank 0] 2026-01-23 08:08:57,606 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:08:57,606 - podcast_processing.episode_processor - DEBUG - System speaker has 238 words
+[Rank 0] 2026-01-23 08:08:57,653 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:08:57,653 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:08:57,653 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:57,654 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:08:57,680 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:08:57,774 - podcast_processing.episode_processor - INFO -   Processing chunk 17/17 (53.8s)
+[Rank 0] 2026-01-23 08:08:58,322 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 673]), System codes shape: torch.Size([1, 8, 673])
+[Rank 0] 2026-01-23 08:08:58,322 - podcast_processing.episode_processor - DEBUG - System speaker has 126 words
+[Rank 0] 2026-01-23 08:08:58,325 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 673])
+[Rank 0] 2026-01-23 08:08:58,325 - podcast_processing.episode_processor - DEBUG - Padded to max_t=673
+[Rank 0] 2026-01-23 08:08:58,325 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 673]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:08:58,325 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 674])
+[Rank 0] 2026-01-23 08:08:58,620 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 673, 4096])
+[Rank 0] 2026-01-23 08:08:58,648 - podcast_processing.episode_processor - INFO - Combined 17 chunks into final output shape: torch.Size([42673, 4096])
+[Rank 0] 2026-01-23 08:09:00,443 - podcast_processing.episode_output_writer - DEBUG - Saved features to outputs/features/train/All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef/features_assignment_0.npy
+[Rank 0] 2026-01-23 08:09:00,443 - podcast_processing.episode_processor - INFO -   Saved features: 42673 frames
+[Rank 0] 2026-01-23 08:09:00,443 - podcast_processing.label_generator - DEBUG - Processing 2 laughter events for SPEAKER_00
+[Rank 0] 2026-01-23 08:09:00,500 - podcast_processing.episode_output_writer - DEBUG - Saved labels to outputs/features/train/All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef/labels_assignment_0_shift_1.npy
+[Rank 0] 2026-01-23 08:09:00,500 - podcast_processing.episode_processor - INFO -   Saved labels (shift=1): 5/42673 positive
+[Rank 0] 2026-01-23 08:09:00,500 - podcast_processing.episode_processor - INFO - Processing Assignment 1
+[Rank 0] 2026-01-23 08:09:00,501 - podcast_processing.episode_processor - INFO - Audio is 3413.8s, splitting into chunks for processing
+[Rank 0] 2026-01-23 08:09:00,501 - podcast_processing.episode_processor - INFO - Processing 3413.8s audio in 17 chunks of 210s each
+[Rank 0] 2026-01-23 08:09:00,501 - podcast_processing.episode_processor - INFO -   Processing chunk 1/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:00,605 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:00,605 - podcast_processing.episode_processor - DEBUG - System speaker has 252 words
+[Rank 0] 2026-01-23 08:09:00,651 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:00,652 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:00,652 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:00,652 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:00,680 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:00,781 - podcast_processing.episode_processor - INFO -   Processing chunk 2/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:00,874 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:00,874 - podcast_processing.episode_processor - DEBUG - System speaker has 456 words
+[Rank 0] 2026-01-23 08:09:00,921 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:00,921 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:00,921 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:00,922 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:00,949 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:01,042 - podcast_processing.episode_processor - INFO -   Processing chunk 3/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:01,134 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:01,134 - podcast_processing.episode_processor - DEBUG - System speaker has 178 words
+[Rank 0] 2026-01-23 08:09:01,181 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:01,181 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:01,181 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:01,182 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:01,209 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:01,302 - podcast_processing.episode_processor - INFO -   Processing chunk 4/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:01,394 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:01,394 - podcast_processing.episode_processor - DEBUG - System speaker has 199 words
+[Rank 0] 2026-01-23 08:09:01,441 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:01,441 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:01,441 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:01,442 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:01,469 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:01,565 - podcast_processing.episode_processor - INFO -   Processing chunk 5/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:01,657 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:01,657 - podcast_processing.episode_processor - DEBUG - System speaker has 324 words
+[Rank 0] 2026-01-23 08:09:01,704 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:01,704 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:01,704 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:01,704 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:01,731 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:01,825 - podcast_processing.episode_processor - INFO -   Processing chunk 6/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:01,916 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:01,916 - podcast_processing.episode_processor - DEBUG - System speaker has 568 words
+[Rank 0] 2026-01-23 08:09:01,963 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:01,963 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:01,963 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:01,964 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:01,991 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:02,084 - podcast_processing.episode_processor - INFO -   Processing chunk 7/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:02,176 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:02,176 - podcast_processing.episode_processor - DEBUG - System speaker has 324 words
+[Rank 0] 2026-01-23 08:09:02,223 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:02,223 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:02,223 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:02,223 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:02,250 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:02,343 - podcast_processing.episode_processor - INFO -   Processing chunk 8/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:02,435 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:02,435 - podcast_processing.episode_processor - DEBUG - System speaker has 491 words
+[Rank 0] 2026-01-23 08:09:02,482 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:02,482 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:02,482 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:02,483 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:02,509 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:02,603 - podcast_processing.episode_processor - INFO -   Processing chunk 9/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:02,694 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:02,695 - podcast_processing.episode_processor - DEBUG - System speaker has 0 words
+[Rank 0] 2026-01-23 08:09:02,741 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:02,741 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:02,741 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:02,742 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:02,769 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:02,861 - podcast_processing.episode_processor - INFO -   Processing chunk 10/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:02,953 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:02,953 - podcast_processing.episode_processor - DEBUG - System speaker has 556 words
+[Rank 0] 2026-01-23 08:09:03,000 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:03,000 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:03,000 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:03,000 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:03,027 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:03,120 - podcast_processing.episode_processor - INFO -   Processing chunk 11/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:03,212 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:03,212 - podcast_processing.episode_processor - DEBUG - System speaker has 429 words
+[Rank 0] 2026-01-23 08:09:03,258 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:03,259 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:03,259 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:03,259 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:03,286 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:03,380 - podcast_processing.episode_processor - INFO -   Processing chunk 12/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:03,473 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:03,473 - podcast_processing.episode_processor - DEBUG - System speaker has 304 words
+[Rank 0] 2026-01-23 08:09:03,520 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:03,520 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:03,520 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:03,520 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:03,548 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:03,640 - podcast_processing.episode_processor - INFO -   Processing chunk 13/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:03,732 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:03,733 - podcast_processing.episode_processor - DEBUG - System speaker has 515 words
+[Rank 0] 2026-01-23 08:09:03,779 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:03,779 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:03,779 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:03,780 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:03,807 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:03,899 - podcast_processing.episode_processor - INFO -   Processing chunk 14/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:03,990 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:03,991 - podcast_processing.episode_processor - DEBUG - System speaker has 618 words
+[Rank 0] 2026-01-23 08:09:04,037 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:04,037 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:04,037 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:04,038 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:04,065 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:04,158 - podcast_processing.episode_processor - INFO -   Processing chunk 15/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:04,250 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:04,250 - podcast_processing.episode_processor - DEBUG - System speaker has 475 words
+[Rank 0] 2026-01-23 08:09:04,297 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:04,297 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:04,297 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:04,298 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:04,326 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:04,418 - podcast_processing.episode_processor - INFO -   Processing chunk 16/17 (210.0s)
+[Rank 0] 2026-01-23 08:09:04,510 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:04,510 - podcast_processing.episode_processor - DEBUG - System speaker has 431 words
+[Rank 0] 2026-01-23 08:09:04,557 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:04,557 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:04,557 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:04,557 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:04,585 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:04,677 - podcast_processing.episode_processor - INFO -   Processing chunk 17/17 (53.8s)
+[Rank 0] 2026-01-23 08:09:04,706 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 673]), System codes shape: torch.Size([1, 8, 673])
+[Rank 0] 2026-01-23 08:09:04,706 - podcast_processing.episode_processor - DEBUG - System speaker has 10 words
+[Rank 0] 2026-01-23 08:09:04,710 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 673])
+[Rank 0] 2026-01-23 08:09:04,710 - podcast_processing.episode_processor - DEBUG - Padded to max_t=673
+[Rank 0] 2026-01-23 08:09:04,710 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 673]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:04,710 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 674])
+[Rank 0] 2026-01-23 08:09:04,737 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 673, 4096])
+[Rank 0] 2026-01-23 08:09:04,763 - podcast_processing.episode_processor - INFO - Combined 17 chunks into final output shape: torch.Size([42673, 4096])
+[Rank 0] 2026-01-23 08:09:06,593 - podcast_processing.episode_output_writer - DEBUG - Saved features to outputs/features/train/All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef/features_assignment_1.npy
+[Rank 0] 2026-01-23 08:09:06,593 - podcast_processing.episode_processor - INFO -   Saved features: 42673 frames
+[Rank 0] 2026-01-23 08:09:06,594 - podcast_processing.label_generator - DEBUG - Processing 0 laughter events for SPEAKER_01
+[Rank 0] 2026-01-23 08:09:06,658 - podcast_processing.episode_output_writer - DEBUG - Saved labels to outputs/features/train/All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef/labels_assignment_1_shift_1.npy
+[Rank 0] 2026-01-23 08:09:06,659 - podcast_processing.episode_processor - INFO -   Saved labels (shift=1): 0/42673 positive
+[Rank 0] 2026-01-23 08:09:06,689 - podcast_processing.episode_output_writer - DEBUG - Saved metadata to outputs/features/train/All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef/metadata_shift_1.json
+[Rank 0] 2026-01-23 08:09:06,689 - podcast_processing.episode_processor - INFO - Completed episode: All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef
+[Rank 0] 2026-01-23 08:09:06,749 - podcast_processing.distributed_orchestrator - INFO - ✓ All The Fly Kids_Chaos & Culture Episode 10 Rethinking the Urban Marketing Aesthetic feat. Karim Lateef
+[Rank 0] 2026-01-23 08:09:06,753 - podcast_processing.episode_processor - INFO - Processing episode: All The Fly Kids_Episode 125 The "End is Near" Episode with Geronimo Knows and Chelle B.
+[Rank 0] 2026-01-23 08:09:06,756 - podcast_processing.label_generator - DEBUG - Loaded 82 laughter events from data/PodcastFillers/metadata/episode_event_speaker_mapping/train/All The Fly Kids_Episode 125 The "End is Near" Episode with Geronimo Knows and Chelle B..json
+[Rank 0] 2026-01-23 08:09:06,758 - podcast_processing.episode_processor - INFO - Top speakers: SPEAKER_01 (longer), SPEAKER_02 (shorter)
+[Rank 0] 2026-01-23 08:09:06,947 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [250.04, 250.22], using fallback
+[Rank 0] 2026-01-23 08:09:07,004 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [329.72, 329.72], using fallback
+[Rank 0] 2026-01-23 08:09:07,011 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [335.96, 335.96], using fallback
+[Rank 0] 2026-01-23 08:09:07,289 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [764.02, 764.21], using fallback
+[Rank 0] 2026-01-23 08:09:07,897 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [1598.07, 1598.58], using fallback
+[Rank 0] 2026-01-23 08:09:08,073 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [1824.30, 1824.57], using fallback
+[Rank 0] 2026-01-23 08:09:08,389 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2245.80, 2246.28], using fallback
+[Rank 0] 2026-01-23 08:09:08,794 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [2796.26, 2796.46], using fallback
+[Rank 0] 2026-01-23 08:09:09,067 - podcast_processing.alignment_merger - WARNING - No speaker found for interval [3153.18, 3153.66], using fallback
+[Rank 0] 2026-01-23 08:09:09,067 - podcast_processing.alignment_merger - INFO - Created 9029 word alignments
+[Rank 0] 2026-01-23 08:09:09,799 - podcast_processing.episode_processor - DEBUG - Loaded SPEAKER_01: torch.Size([1, 75733184]), SPEAKER_02: torch.Size([1, 75733184])
+[Rank 0] 2026-01-23 08:09:09,799 - podcast_processing.episode_processor - INFO - Episode duration: 3155.55s
+[Rank 0] 2026-01-23 08:09:09,799 - podcast_processing.episode_processor - INFO - Processing Assignment 0
+[Rank 0] 2026-01-23 08:09:09,799 - podcast_processing.episode_processor - INFO - Audio is 3155.5s, splitting into chunks for processing
+[Rank 0] 2026-01-23 08:09:09,799 - podcast_processing.episode_processor - INFO - Processing 3155.5s audio in 16 chunks of 210s each
+[Rank 0] 2026-01-23 08:09:09,799 - podcast_processing.episode_processor - INFO -   Processing chunk 1/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:09,886 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:09,886 - podcast_processing.episode_processor - DEBUG - System speaker has 255 words
+[Rank 0] 2026-01-23 08:09:09,931 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:09,932 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:09,932 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:09,932 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:09,961 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:10,053 - podcast_processing.episode_processor - INFO -   Processing chunk 2/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:10,137 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:10,138 - podcast_processing.episode_processor - DEBUG - System speaker has 480 words
+[Rank 0] 2026-01-23 08:09:10,184 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:10,184 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:10,184 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:10,185 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:10,212 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:10,305 - podcast_processing.episode_processor - INFO -   Processing chunk 3/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:10,387 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:10,387 - podcast_processing.episode_processor - DEBUG - System speaker has 348 words
+[Rank 0] 2026-01-23 08:09:10,434 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:10,434 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:10,434 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:10,435 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:10,462 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:10,554 - podcast_processing.episode_processor - INFO -   Processing chunk 4/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:10,636 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:10,637 - podcast_processing.episode_processor - DEBUG - System speaker has 121 words
+[Rank 0] 2026-01-23 08:09:10,683 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:10,683 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:10,683 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:10,683 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:10,711 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:10,803 - podcast_processing.episode_processor - INFO -   Processing chunk 5/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:10,886 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:10,887 - podcast_processing.episode_processor - DEBUG - System speaker has 268 words
+[Rank 0] 2026-01-23 08:09:10,933 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:10,934 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:10,934 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:10,934 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:10,962 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:11,053 - podcast_processing.episode_processor - INFO -   Processing chunk 6/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:11,136 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:11,136 - podcast_processing.episode_processor - DEBUG - System speaker has 380 words
+[Rank 0] 2026-01-23 08:09:11,182 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:11,182 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:11,183 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:11,183 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:11,210 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:11,302 - podcast_processing.episode_processor - INFO -   Processing chunk 7/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:11,384 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:11,385 - podcast_processing.episode_processor - DEBUG - System speaker has 247 words
+[Rank 0] 2026-01-23 08:09:11,431 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:11,431 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:11,432 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:11,432 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:11,459 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:11,552 - podcast_processing.episode_processor - INFO -   Processing chunk 8/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:11,634 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:11,634 - podcast_processing.episode_processor - DEBUG - System speaker has 447 words
+[Rank 0] 2026-01-23 08:09:11,681 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:11,681 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:11,681 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:11,681 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:11,709 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:11,801 - podcast_processing.episode_processor - INFO -   Processing chunk 9/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:11,884 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:11,884 - podcast_processing.episode_processor - DEBUG - System speaker has 451 words
+[Rank 0] 2026-01-23 08:09:11,930 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:11,930 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:11,931 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:11,931 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:11,958 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:12,050 - podcast_processing.episode_processor - INFO -   Processing chunk 10/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:12,133 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:12,133 - podcast_processing.episode_processor - DEBUG - System speaker has 355 words
+[Rank 0] 2026-01-23 08:09:12,180 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:12,180 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:12,180 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:12,180 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:12,208 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:12,299 - podcast_processing.episode_processor - INFO -   Processing chunk 11/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:12,381 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:12,382 - podcast_processing.episode_processor - DEBUG - System speaker has 241 words
+[Rank 0] 2026-01-23 08:09:12,428 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:12,428 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:12,428 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:12,428 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:12,455 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:12,548 - podcast_processing.episode_processor - INFO -   Processing chunk 12/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:12,630 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:12,630 - podcast_processing.episode_processor - DEBUG - System speaker has 276 words
+[Rank 0] 2026-01-23 08:09:12,677 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:12,677 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:12,677 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:12,677 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:12,704 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:12,797 - podcast_processing.episode_processor - INFO -   Processing chunk 13/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:12,879 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:12,879 - podcast_processing.episode_processor - DEBUG - System speaker has 148 words
+[Rank 0] 2026-01-23 08:09:12,926 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:12,926 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:12,926 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:12,927 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:12,953 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:13,046 - podcast_processing.episode_processor - INFO -   Processing chunk 14/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:13,128 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:13,128 - podcast_processing.episode_processor - DEBUG - System speaker has 252 words
+[Rank 0] 2026-01-23 08:09:13,175 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:13,175 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:13,175 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:13,176 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:13,202 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:13,302 - podcast_processing.episode_processor - INFO -   Processing chunk 15/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:13,396 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:13,396 - podcast_processing.episode_processor - DEBUG - System speaker has 117 words
+[Rank 0] 2026-01-23 08:09:13,438 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 2625])
+[Rank 0] 2026-01-23 08:09:13,438 - podcast_processing.episode_processor - DEBUG - Padded to max_t=2625
+[Rank 0] 2026-01-23 08:09:13,438 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 2625]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:13,439 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 2626])
+[Rank 0] 2026-01-23 08:09:13,480 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 2625, 4096])
+[Rank 0] 2026-01-23 08:09:13,561 - podcast_processing.episode_processor - INFO -   Processing chunk 16/16 (5.5s)
+[Rank 0] 2026-01-23 08:09:13,610 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 70]), System codes shape: torch.Size([1, 8, 70])
+[Rank 0] 2026-01-23 08:09:13,610 - podcast_processing.episode_processor - DEBUG - System speaker has 0 words
+[Rank 0] 2026-01-23 08:09:13,610 - podcast_processing.episode_processor - DEBUG - Text tokens shape: torch.Size([1, 1, 70])
+[Rank 0] 2026-01-23 08:09:13,610 - podcast_processing.episode_processor - DEBUG - Padded to max_t=70
+[Rank 0] 2026-01-23 08:09:13,610 - podcast_processing.episode_processor - DEBUG - Combined codes shape: torch.Size([1, 17, 70]) (1 text + 8 user + 8 system = 17)
+[Rank 0] 2026-01-23 08:09:13,610 - podcast_processing.episode_processor - DEBUG - Delayed codes shape: torch.Size([1, 17, 71])
+[Rank 0] 2026-01-23 08:09:13,652 - podcast_processing.episode_processor - DEBUG - Transformer output shape: torch.Size([1, 70, 4096])
+[Rank 0] 2026-01-23 08:09:13,674 - podcast_processing.episode_processor - INFO - Combined 16 chunks into final output shape: torch.Size([39445, 4096])
+[Rank 0] 2026-01-23 08:09:15,355 - podcast_processing.episode_output_writer - DEBUG - Saved features to outputs/features/train/All The Fly Kids_Episode 125 The "End is Near" Episode with Geronimo Knows and Chelle B./features_assignment_0.npy
+[Rank 0] 2026-01-23 08:09:15,356 - podcast_processing.episode_processor - INFO -   Saved features: 39445 frames
+[Rank 0] 2026-01-23 08:09:15,356 - podcast_processing.label_generator - DEBUG - Processing 39 laughter events for SPEAKER_01
+[Rank 0] 2026-01-23 08:09:15,406 - podcast_processing.episode_output_writer - DEBUG - Saved labels to outputs/features/train/All The Fly Kids_Episode 125 The "End is Near" Episode with Geronimo Knows and Chelle B./labels_assignment_0_shift_1.npy
+[Rank 0] 2026-01-23 08:09:15,406 - podcast_processing.episode_processor - INFO -   Saved labels (shift=1): 144/39445 positive
+[Rank 0] 2026-01-23 08:09:15,407 - podcast_processing.episode_processor - INFO - Processing Assignment 1
+[Rank 0] 2026-01-23 08:09:15,407 - podcast_processing.episode_processor - INFO - Audio is 3155.5s, splitting into chunks for processing
+[Rank 0] 2026-01-23 08:09:15,407 - podcast_processing.episode_processor - INFO - Processing 3155.5s audio in 16 chunks of 210s each
+[Rank 0] 2026-01-23 08:09:15,407 - podcast_processing.episode_processor - INFO -   Processing chunk 1/16 (210.0s)
+[Rank 0] 2026-01-23 08:09:15,501 - podcast_processing.episode_processor - DEBUG - User codes shape: torch.Size([1, 8, 2625]), System codes shape: torch.Size([1, 8, 2625])
+[Rank 0] 2026-01-23 08:09:15,502 - podcast_processing.episode_processor - DEBUG - System speaker has 318 words
