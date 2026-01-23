@@ -9,6 +9,5 @@ wheels/
 # Virtual environments
 .venv
 
-
-custom_weights/*
-!custom_weights/README.md
+.devcontainer
+.claude
