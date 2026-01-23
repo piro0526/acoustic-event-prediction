@@ -30,7 +30,7 @@ class EpisodeProcessor:
     6. Saving results with metadata
     """
 
-    def __init__(self, mimi, lm_model, tokenizer, device, shift_frames: int):
+    def __init__(self, mimi, lm_model, tokenizer, device, shift_frames: int, mask_system_audio: bool = False):
         """Initialize processor with models.
 
         Args:
@@ -39,12 +39,14 @@ class EpisodeProcessor:
             tokenizer: SentencePiece tokenizer
             device: Device to run on (e.g., 'cuda:0')
             shift_frames: Prediction shift value for label generation
+            mask_system_audio: Whether to apply masking to system audio (default: False)
         """
         self.mimi = mimi
         self.lm = lm_model
         self.tokenizer = tokenizer
         self.device = device
         self.shift_frames = shift_frames
+        self.mask_system_audio = mask_system_audio
 
         # Initialize Interleaver for text token stream creation
         self.interleaver = Interleaver(
@@ -59,13 +61,21 @@ class EpisodeProcessor:
         self.alignment_merger = AlignmentMerger()
         self.label_generator = LabelGenerator(frame_rate=12.5)
 
-    def process_episode(self, episode_info: Dict, output_root: Path, annotations_dir: Path):
+    def process_episode(
+        self,
+        episode_info: Dict,
+        output_root: Path,
+        annotations_dir: Path,
+        mask_generator=None
+    ):
         """Process a single episode and save features, labels, and metadata.
 
         Args:
             episode_info: Dict with 'split', 'name', 'audio_dir', 'diarization', 'transcript'
             output_root: Base output directory (not episode-specific path)
             annotations_dir: Directory containing episode_event_speaker_mapping annotations
+            mask_generator: Optional callable(laughter_events, duration, system_speaker_id) -> np.ndarray
+                           Returns boolean mask [num_samples] where True = mask (zero out)
         """
         logger.info(f"Processing episode: {episode_info['name']}")
 
@@ -121,6 +131,20 @@ class EpisodeProcessor:
         for assign_idx, assign_info in enumerate(assignments_info):
             logger.info(f"Processing Assignment {assign_idx}")
 
+            # Generate system audio mask if requested
+            system_audio_mask = None
+            if self.mask_system_audio and mask_generator is not None:
+                # Get actual number of samples from system audio
+                num_samples = assign_info['system_audio'].shape[-1]
+                system_audio_mask = mask_generator(
+                    laughter_events=laughter_events,
+                    duration=duration,
+                    system_speaker_id=assign_info['system'],
+                    num_samples=num_samples
+                )
+                if system_audio_mask is not None:
+                    logger.info(f"  Generated system audio mask: {system_audio_mask.sum()}/{len(system_audio_mask)} samples masked")
+
             # Check if features file exists
             features_path = writer.episode_dir / f"features_assignment_{assign_idx}.npy"
 
@@ -131,7 +155,8 @@ class EpisodeProcessor:
                     system_audio=assign_info['system_audio'],
                     alignments=alignments,
                     system_speaker_label=assign_info['system'],
-                    duration=duration
+                    duration=duration,
+                    system_audio_mask=system_audio_mask
                 )  # Returns [T, 4096]
 
                 num_frames = features.shape[0]
@@ -145,29 +170,28 @@ class EpisodeProcessor:
                 num_frames = existing_features.shape[0]
                 logger.info(f"  Features already exist: {num_frames} frames")
 
-            # Generate and save labels
-            if laughter_events:
-                labels = self.label_generator.create_labels_prediction(
-                    laughter_events=laughter_events,
-                    num_frames=num_frames,
-                    user_speaker_id=assign_info['user'],
-                    shift_frames=self.shift_frames
-                )
+            # Generate and save labels (always, even if no laughter events)
+            labels = self.label_generator.create_labels_prediction(
+                laughter_events=laughter_events,
+                num_frames=num_frames,
+                user_speaker_id=assign_info['user'],
+                shift_frames=self.shift_frames
+            )
 
-                stats = self.label_generator.compute_label_statistics(labels)
+            stats = self.label_generator.compute_label_statistics(labels)
 
-                # Save labels
-                writer.save_labels(assign_idx, labels)
+            # Save labels
+            writer.save_labels(assign_idx, labels)
 
-                # Add statistics to metadata buffer
-                writer.add_assignment_stats(
-                    assignment_idx=assign_idx,
-                    user_speaker_id=assign_info['user'],
-                    system_speaker_id=assign_info['system'],
-                    stats=stats
-                )
+            # Add statistics to metadata buffer
+            writer.add_assignment_stats(
+                assignment_idx=assign_idx,
+                user_speaker_id=assign_info['user'],
+                system_speaker_id=assign_info['system'],
+                stats=stats
+            )
 
-                logger.info(f"  Saved labels (shift={self.shift_frames}): {stats['num_positive_frames']}/{num_frames} positive")
+            logger.info(f"  Saved labels (shift={self.shift_frames}): {stats['num_positive_frames']}/{num_frames} positive")
 
             # Clear GPU cache after each assignment
             if torch.cuda.is_available():
@@ -184,7 +208,8 @@ class EpisodeProcessor:
         system_audio: torch.Tensor,
         alignments: List[Alignment],
         system_speaker_label: str,
-        duration: float
+        duration: float,
+        system_audio_mask: np.ndarray = None
     ) -> torch.Tensor:
         """Process one speaker assignment to get transformer output.
 
@@ -194,10 +219,14 @@ class EpisodeProcessor:
             alignments: List of (word, (start, end), speaker) tuples
             system_speaker_label: Which speaker is the system (for text tokens)
             duration: Duration in seconds
+            system_audio_mask: Optional boolean mask [num_samples] where True = mask (zero out)
 
         Returns:
             Transformer output tensor [T, 4096]
         """
+        # Apply mask to system audio if provided
+        if system_audio_mask is not None:
+            system_audio = self._apply_audio_mask(system_audio, system_audio_mask)
         # Check if audio needs chunking (>3.5 minutes = 210 seconds)
         max_chunk_duration = 210  # seconds, conservative limit
         sample_rate = 24000
@@ -210,7 +239,7 @@ class EpisodeProcessor:
         if max_samples > max_chunk_samples:
             logger.info(f"Audio is {duration:.1f}s, splitting into chunks for processing")
             return self._process_assignment_chunked(
-                user_audio, system_audio, alignments, system_speaker_label, duration
+                user_audio, system_audio, alignments, system_speaker_label, duration, system_audio_mask
             )
 
         with torch.no_grad():
@@ -313,7 +342,8 @@ class EpisodeProcessor:
         system_audio: torch.Tensor,
         alignments: List[Alignment],
         system_speaker_label: str,
-        duration: float
+        duration: float,
+        system_audio_mask: np.ndarray = None
     ) -> torch.Tensor:
         """Process long audio in chunks to avoid OOM.
 
@@ -362,10 +392,15 @@ class EpisodeProcessor:
                 for word, (start, end), speaker in chunk_alignments
             ]
 
+            # Extract chunk from mask if provided
+            chunk_mask = None
+            if system_audio_mask is not None:
+                chunk_mask = system_audio_mask[start_sample:end_sample]
+
             # Process this chunk (recursive call, but it won't chunk again due to size check)
             chunk_out = self._process_assignment(
                 user_chunk, system_chunk, chunk_alignments_adjusted,
-                system_speaker_label, chunk_actual_duration
+                system_speaker_label, chunk_actual_duration, chunk_mask
             )
 
             all_transformer_outs.append(chunk_out)
@@ -444,3 +479,35 @@ class EpisodeProcessor:
         logger.debug(f"Loaded {speaker1}: {audio1.shape}, {speaker2}: {audio2.shape}")
 
         return audio1, audio2
+
+    def _apply_audio_mask(self, audio: torch.Tensor, mask: np.ndarray) -> torch.Tensor:
+        """Apply boolean mask to audio tensor by zeroing out masked samples.
+
+        Args:
+            audio: Audio tensor [channels, samples]
+            mask: Boolean mask [num_samples] where True = mask (zero out)
+
+        Returns:
+            Masked audio tensor [channels, samples]
+        """
+        # Clone to avoid modifying original
+        masked_audio = audio.clone()
+
+        # Convert mask to tensor
+        mask_tensor = torch.from_numpy(mask).to(audio.device)
+
+        # Resize mask if needed
+        num_samples = audio.shape[-1]
+        if len(mask_tensor) != num_samples:
+            # Resample mask using nearest neighbor interpolation
+            indices = torch.linspace(0, len(mask_tensor) - 1, num_samples).long()
+            # Clamp indices to avoid out-of-bounds due to floating point rounding
+            indices = indices.clamp(0, len(mask_tensor) - 1)
+            mask_tensor = mask_tensor[indices]
+
+        # Apply mask: zero out masked samples across all channels
+        masked_audio[:, mask_tensor] = 0.0
+
+        logger.debug(f"Applied audio mask: {mask_tensor.sum()}/{num_samples} samples zeroed")
+
+        return masked_audio

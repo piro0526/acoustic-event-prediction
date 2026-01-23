@@ -65,7 +65,9 @@ def evaluate_model(
     labels = np.concatenate(all_labels, axis=0).squeeze()
 
     # Get metadata from dataset if available
-    metadata = dataset.metadata if dataset is not None else None
+    metadata = None
+    if dataset is not None and hasattr(dataset, 'metadata'):
+        metadata = dataset.metadata
 
     return predictions, labels, metadata
 
@@ -204,52 +206,69 @@ def plot_pr_curve(
 def save_predictions(
     predictions: np.ndarray,
     labels: np.ndarray,
-    metadata: list,
+    concat_metadata: dict,
     output_dir: Path
 ) -> None:
-    """Save predictions to separate CSV files for each episode.
+    """Save predictions to separate CSV files for each episode using concat metadata.
 
     Args:
         predictions: Predicted probabilities
         labels: Ground truth labels
-        metadata: List of metadata dicts (one per frame)
+        concat_metadata: Metadata dict from concatenated dataset with episode info
         output_dir: Directory to save CSV files
     """
-    # Extract metadata fields
-    episodes = [m['episode_name'] for m in metadata]
-    frames = [m['frame_idx'] for m in metadata]
-    user_speakers = [m['user_id'] for m in metadata]
-
-    # Create dataframe
-    df = pd.DataFrame({
-        'episode': episodes,
-        'frame': frames,
-        'time_ms': np.array(frames) * 80,  # 80ms per frame at 12.5Hz
-        'user_speaker': user_speakers,
-        'prediction': predictions,
-        'label': labels
-    })
-
-    # Sort by episode, then by user_speaker, then by frame
-    df = df.sort_values(['episode', 'user_speaker', 'frame']).reset_index(drop=True)
-
     # Create predictions subdirectory
     predictions_dir = output_dir / 'predictions'
     predictions_dir.mkdir(exist_ok=True)
 
-    # Save each episode to a separate CSV file
-    episode_groups = df.groupby('episode')
-    num_episodes = len(episode_groups)
+    # Process each episode from metadata
+    episodes_info = concat_metadata.get('episodes', [])
 
-    for episode_name, episode_df in episode_groups:
-        # Drop the episode column since it's redundant in per-episode files
-        episode_df = episode_df.drop(columns=['episode'])
+    if not episodes_info:
+        logger.warning("No episode information in metadata, saving single file")
+        # Fallback to single file
+        df = pd.DataFrame({
+            'frame_idx': np.arange(len(predictions)),
+            'time_ms': np.arange(len(predictions)) * 80,
+            'prediction': predictions,
+            'label': labels
+        })
+        output_file = output_dir / 'predictions.csv'
+        df.to_csv(output_file, index=False)
+        logger.info(f"Saved {len(predictions)} predictions to {output_file}")
+        return
 
-        # Save to file
-        episode_file = predictions_dir / f'{episode_name}.csv'
-        episode_df.to_csv(episode_file, index=False)
+    num_saved = 0
+    for episode_info in episodes_info:
+        episode_name = episode_info['episode_name']
+        assignment_idx = episode_info['assignment_idx']
+        system_speaker_id = episode_info['system_speaker_id']
+        user_speaker_id = episode_info['user_speaker_id']
+        start_frame = episode_info['start_frame']
+        end_frame = episode_info['end_frame']
 
-    logger.info(f"Saved predictions for {num_episodes} episodes to {predictions_dir}/")
+        # Extract predictions and labels for this episode
+        episode_predictions = predictions[start_frame:end_frame]
+        episode_labels = labels[start_frame:end_frame]
+
+        # Create dataframe with relative frame indices
+        df = pd.DataFrame({
+            'frame_idx': np.arange(len(episode_predictions)),
+            'time_ms': np.arange(len(episode_predictions)) * 80,  # 80ms per frame at 12.5Hz
+            'system_speaker_id': system_speaker_id,
+            'user_speaker_id': user_speaker_id,
+            'assignment_idx': assignment_idx,
+            'prediction': episode_predictions,
+            'label': episode_labels
+        })
+
+        # Save to file (one file per episode+assignment combination)
+        safe_episode_name = episode_name.replace('/', '_').replace('\\', '_')
+        episode_file = predictions_dir / f'{safe_episode_name}_assignment_{assignment_idx}.csv'
+        df.to_csv(episode_file, index=False)
+        num_saved += 1
+
+    logger.info(f"Saved predictions for {num_saved} episode assignments to {predictions_dir}/")
 
 
 def main():
@@ -328,10 +347,10 @@ def main():
     # Load test dataset
     logger.info(f"Loading {args.split} dataset...")
     test_dataset = LaughterDataset(
-        Path(args.features_dir),
+        concat_dir=Path(args.features_dir),
         split=args.split,
-        shift_frames=args.shift_frames,
-        shuffle=False
+        shuffle=False,
+        mmap_mode= None  # Use memory mapping for efficiency
     )
     logger.info(f"Test dataset loaded with {len(test_dataset)} frames")
 
@@ -375,10 +394,10 @@ def main():
         logger.info("\nLoading validation dataset for threshold optimization...")
         try:
             val_dataset = LaughterDataset(
-                Path(args.features_dir),
+                concat_dir=Path(args.features_dir),
                 split='validation',
-                shift_frames=args.shift_frames,
-                shuffle=False
+                shuffle=False,
+                mmap_mode='r'  # Use memory mapping for efficiency
             )
             logger.info(f"Validation dataset loaded with {len(val_dataset)} frames")
 
@@ -520,11 +539,13 @@ def main():
         json.dump(results, f, indent=2)
     logger.info(f"Saved results to {results_path}")
 
-    # Save predictions (only if metadata is available)
-    if metadata is not None:
-        save_predictions(predictions, labels, metadata, output_dir)
+    if hasattr(test_dataset, 'concat_metadata'):
+        # New format: Use concat metadata to split by episode
+        save_predictions(
+            predictions, labels, test_dataset.concat_metadata, output_dir
+        )
     else:
-        logger.info("Skipping detailed predictions CSV (metadata not available)")
+        logger.warning("No metadata available for saving detailed predictions")
 
     logger.info("\nEvaluation completed!")
 

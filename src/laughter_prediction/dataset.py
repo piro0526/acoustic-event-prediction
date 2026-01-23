@@ -1,4 +1,4 @@
-"""Dataset for laughter event prediction from pre-extracted features."""
+"""Dataset for laughter event prediction from pre-concatenated features."""
 
 import json
 import logging
@@ -15,156 +15,93 @@ logger = logging.getLogger(__name__)
 class LaughterDataset(Dataset):
     """Dataset for laughter event prediction.
 
-    Loads pre-extracted features and labels from episode-level structure.
-    Features and labels are extracted using compute_features.py.
+    Loads pre-concatenated features and labels created by preprocess_concat.py.
+    This avoids the memory overhead of concatenating during initialization.
     """
 
     def __init__(
         self,
-        features_dir: Path,
+        concat_dir: Path,
         split: str = 'train',
-        shift_frames: int = 1,
-        shuffle: bool = True
+        shuffle: bool = True,
+        mmap_mode: str = 'r'
     ):
         """Initialize dataset.
 
         Args:
-            features_dir: Base directory containing {split}/{episode_name}/ subdirectories
+            concat_dir: Directory containing pre-concatenated {split}_features.npy files
             split: One of 'train', 'test', 'validation'
-            shift_frames: Which shift value to use for labels (e.g., 1, 5, 10, 25)
             shuffle: Whether to shuffle frames
+            mmap_mode: Memory-map mode ('r' for read-only, None to load in memory)
         """
-        self.features_dir = Path(features_dir) / split
+        self.concat_dir = Path(concat_dir)
         self.split = split
-        self.shift_frames = shift_frames
         self.shuffle = shuffle
+        self.mmap_mode = mmap_mode
 
-        # Validate directory exists
-        if not self.features_dir.exists():
-            raise FileNotFoundError(f"Features directory not found: {self.features_dir}")
+        # Load concatenated data
+        self._load_concat_data()
 
-        # Load pre-extracted data
-        self._load_data()
         logger.info(f"Loaded {len(self.features)} frames from {split} split")
 
-    def _load_data(self):
-        """Load pre-extracted features, labels, and metadata from episode-level structure.
+    def _load_concat_data(self):
+        """Load pre-concatenated features and labels.
 
         Loads from:
-            {split}/{episode_name}/features_assignment_{0,1}.npy
-            {split}/{episode_name}/labels_assignment_{0,1}_shift_{N}.npy
-            {split}/{episode_name}/metadata_shift_{N}.json
+            {concat_dir}/{split}_features.npy
+            {concat_dir}/{split}_labels.npy
+            {concat_dir}/{split}_metadata.json
         """
-        logger.info(f"Loading episodes from {self.features_dir}")
+        # Paths to concatenated files
+        features_path = self.concat_dir / f'{self.split}_features.npy'
+        labels_path = self.concat_dir / f'{self.split}_labels.npy'
+        metadata_path = self.concat_dir / f'{self.split}_metadata.json'
 
-        # Find all episode directories
-        episode_dirs = sorted([d for d in self.features_dir.iterdir() if d.is_dir()])
+        # Validate files exist
+        if not features_path.exists():
+            raise FileNotFoundError(f"Features file not found: {features_path}")
+        if not labels_path.exists():
+            raise FileNotFoundError(f"Labels file not found: {labels_path}")
+        if not metadata_path.exists():
+            raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
 
-        if not episode_dirs:
-            raise FileNotFoundError(f"No episode directories found in {self.features_dir}")
+        # Load metadata
+        logger.info(f"Loading metadata from {metadata_path}")
+        with open(metadata_path, 'r') as f:
+            self.concat_metadata = json.load(f)
 
-        logger.info(f"Found {len(episode_dirs)} episodes")
+        # Load features and labels using memory mapping
+        if self.mmap_mode is not None:
+            logger.info(f"Loading features with memory-mapping (mode={self.mmap_mode})...")
+            self.features = np.load(features_path, mmap_mode=self.mmap_mode)
+            self.labels = np.load(labels_path, mmap_mode=self.mmap_mode)
+            logger.info(f"Memory-mapped {len(self.features)} frames (not loaded into RAM)")
+        else:
+            logger.info(f"Loading features into memory...")
+            self.features = np.load(features_path)
+            self.labels = np.load(labels_path)
+            logger.info(f"Loaded {len(self.features)} frames into memory")
 
-        # Accumulate features, labels, and metadata
-        all_features = []
-        all_labels = []
-        all_metadata = []
-
-        for episode_dir in episode_dirs:
-            episode_name = episode_dir.name
-
-            # Load metadata for this episode
-            metadata_path = episode_dir / f'metadata_shift_{self.shift_frames}.json'
-            if not metadata_path.exists():
-                logger.warning(
-                    f"Metadata not found for episode {episode_name} with shift={self.shift_frames}, skipping"
-                )
-                continue
-
-            with open(metadata_path, 'r') as f:
-                episode_metadata = json.load(f)
-
-            # Process both assignments (0, 1)
-            for assignment_idx in [0, 1]:
-                features_path = episode_dir / f'features_assignment_{assignment_idx}.npy'
-                labels_path = episode_dir / f'labels_assignment_{assignment_idx}_shift_{self.shift_frames}.npy'
-
-                # Check if files exist
-                if not features_path.exists():
-                    logger.warning(f"Features not found: {features_path}, skipping")
-                    continue
-                if not labels_path.exists():
-                    logger.warning(f"Labels not found: {labels_path}, skipping")
-                    continue
-
-                # Load features and labels
-                features = np.load(features_path)  # [T, 4096]
-                labels = np.load(labels_path)      # [T]
-
-                # Validate shapes
-                if features.shape[0] != labels.shape[0]:
-                    logger.warning(
-                        f"Shape mismatch in {episode_name} assignment {assignment_idx}: "
-                        f"features={features.shape[0]}, labels={labels.shape[0]}, skipping"
-                    )
-                    continue
-
-                # Get assignment info from metadata
-                assignment_info = episode_metadata['assignments'][assignment_idx]
-
-                # Create per-frame metadata
-                frame_metadata = {
-                    'episode_name': episode_name,
-                    'split': self.split,
-                    'assignment_idx': assignment_idx,
-                    'user_speaker_id': assignment_info['user_speaker_id'],
-                    'system_speaker_id': assignment_info['system_speaker_id']
-                }
-
-                # Accumulate
-                all_features.append(features)
-                all_labels.append(labels)
-                all_metadata.extend([frame_metadata] * len(features))
-
-                logger.debug(
-                    f"Loaded {episode_name} assignment {assignment_idx}: "
-                    f"{features.shape[0]} frames, "
-                    f"{assignment_info['num_positive_frames']} positive"
-                )
-
-        # Concatenate all episodes
-        if not all_features:
-            raise ValueError(f"No valid episode data found in {self.features_dir}")
-
-        self.features = np.concatenate(all_features, axis=0)
-        self.labels = np.concatenate(all_labels, axis=0)
-        self.metadata = all_metadata
-
-        # Store label config
-        self.label_config = {
-            'shift_frames': self.shift_frames,
-            'mode': 'prediction'
-        }
-
-        # Validate shapes match
+        # Validate shapes
         if len(self.features) != len(self.labels):
             raise ValueError(
                 f"Features and labels length mismatch: "
                 f"{len(self.features)} vs {len(self.labels)}"
             )
-        if len(self.features) != len(self.metadata):
-            raise ValueError(
-                f"Features and metadata length mismatch: "
-                f"{len(self.features)} vs {len(self.metadata)}"
-            )
+
+        num_positive = int(self.concat_metadata['num_positive_frames'])
+        num_negative = self.concat_metadata['num_frames'] - num_positive
 
         logger.info(
-            f"Loaded {len(self.features)} total frames from {len(episode_dirs)} episodes "
-            f"({np.sum(self.labels)} positive, {len(self.labels) - np.sum(self.labels)} negative)"
+            f"Loaded {self.concat_metadata['num_frames']} frames from "
+            f"{self.concat_metadata['num_episodes']} episodes "
+            f"({num_positive} positive [{100.0*self.concat_metadata['positive_rate']:.2f}%], "
+            f"{num_negative} negative)"
         )
 
         # Create shuffled indices if requested
         if self.shuffle:
+            logger.info("Creating shuffled indices...")
             self.indices = np.random.permutation(len(self.features))
         else:
             self.indices = np.arange(len(self.features))
@@ -195,46 +132,39 @@ class LaughterDataset(Dataset):
         }
 
     def compute_class_weights(self) -> torch.Tensor:
-        """Compute positive class weight for BCE loss from loaded labels.
+        """Compute positive class weight for BCE loss.
 
         Returns:
             pos_weight tensor for BCEWithLogitsLoss
         """
-        logger.info("Computing class weights from labels...")
+        logger.info("Computing class weights...")
 
-        num_positive = np.sum(self.labels)
-        num_negative = len(self.labels) - num_positive
+        num_positive = self.concat_metadata['num_positive_frames']
+        num_negative = self.concat_metadata['num_frames'] - num_positive
 
         # Calculate pos_weight
         pos_weight = num_negative / num_positive if num_positive > 0 else 1.0
 
         logger.info(
             f"Class distribution: "
-            f"{num_positive} positive ({num_positive/len(self.labels)*100:.2f}%), "
-            f"{num_negative} negative ({num_negative/len(self.labels)*100:.2f}%)"
+            f"{num_positive} positive ({100.0*self.concat_metadata['positive_rate']:.2f}%), "
+            f"{num_negative} negative"
         )
         logger.info(f"Computed pos_weight: {pos_weight:.4f}")
 
         return torch.tensor([pos_weight], dtype=torch.float32)
 
     def get_statistics(self) -> Dict[str, Any]:
-        """Get dataset statistics from loaded data.
+        """Get dataset statistics.
 
         Returns:
             Dictionary with dataset statistics
         """
-        num_positive = int(np.sum(self.labels))
-        num_negative = len(self.labels) - num_positive
-        pos_ratio = num_positive / len(self.labels) if len(self.labels) > 0 else 0.0
-
-        # Get unique episodes from metadata
-        unique_episodes = set(meta['episode_name'] for meta in self.metadata)
-
         return {
-            'num_episodes': len(unique_episodes),
-            'num_frames': len(self.labels),
-            'num_positive': num_positive,
-            'num_negative': num_negative,
-            'pos_ratio': float(pos_ratio),
-            'label_config': self.label_config,
+            'num_episodes': self.concat_metadata['num_episodes'],
+            'num_frames': self.concat_metadata['num_frames'],
+            'num_positive': self.concat_metadata['num_positive_frames'],
+            'num_negative': self.concat_metadata['num_frames'] - self.concat_metadata['num_positive_frames'],
+            'pos_ratio': self.concat_metadata['positive_rate'],
+            'shift_frames': self.concat_metadata['shift_frames'],
         }

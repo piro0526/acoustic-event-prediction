@@ -6,7 +6,7 @@ audio from pre-extracted features and labels.
 
 Usage:
     # Single GPU (default shift=1)
-    python train_laughter_predictor.py \
+    uv run train_laughter_predictor.py \
         --features_dir output/laughter/features \
         --shift_frames 1 \
         --output_dir output/laughter_prediction \
@@ -15,7 +15,7 @@ Usage:
         --epochs 50
 
     # Multi-GPU (e.g., 4 GPUs) with custom shift value
-    torchrun --nproc_per_node=4 train_laughter_predictor.py \
+    uv run torchrun --nproc_per_node=4 train_laughter_predictor.py \
         --features_dir output/laughter/features \
         --shift_frames 5 \
         --output_dir output/laughter_prediction \

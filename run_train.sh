@@ -1,13 +1,24 @@
 # !/bin/sh
 
-nohup uv run torchrun --nproc_per_node=4 train_laughter_predictor.py \
-        --transformer_dir output/transformer_outs \
-        --labels_dir data/PodcastFillers/metadata/episode_laughter_prediction_intervals \
-        --turns_dir data/PodcastFillers/metadata/episode_laughter_turns \
-        --output_dir output/laughter_prediction_filtered \
+nohup uv run torchrun --nproc_per_node=8 scripts/train_laughter_predictor.py \
+        --features_dir outputs/features_masked_concat \
+        --shift_frames 1 \
+        --output_dir outputs/laughter_prediction_masked \
         --batch_size 512 \
-        --learning_rate 3e-4 \
-        --epochs 100 \
-        --num_workers 0 \
-        --loss_type bce \
-> filtered.out
+        --learning_rate 2e-4 \
+        --epochs 50 \
+        --early_stopping_patience 50 \
+        --num_workers 4 \
+        --loss_type focal \
+> masked.out
+
+uv run scripts/train_laughter_predictor.py \
+        --features_dir outputs/features_masked_concat \
+        --shift_frames 1 \
+        --output_dir outputs/laughter_prediction_masked \
+        --batch_size 512 \
+        --learning_rate 2e-4 \
+        --epochs 50 \
+        --early_stopping_patience 50 \
+        --num_workers 1 \
+        --loss_type focal

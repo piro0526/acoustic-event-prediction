@@ -271,14 +271,14 @@ def main():
     parser.add_argument(
         '--features_dir',
         type=str,
-        default='output/laughter/features',
-        help='Directory containing episode-level features and labels'
+        default='output/laughter/features_concat',
+        help='Directory containing pre-concatenated features and labels (*_features.npy, *_labels.npy)'
     )
     parser.add_argument(
         '--shift_frames',
         type=int,
         default=1,
-        help='Prediction shift value to use for labels (e.g., 1, 5, 10, 25)'
+        help='[DEPRECATED] Shift value is now read from metadata'
     )
     parser.add_argument(
         '--output_dir',
@@ -407,19 +407,19 @@ def main():
         logger.info("Loading datasets...")
 
     train_dataset = LaughterDataset(
-        Path(args.features_dir),
+        concat_dir=Path(args.features_dir),
         split='train',
-        shift_frames=args.shift_frames,
-        shuffle=True
+        shuffle=True,
+        mmap_mode=None  # Load into memory
     )
 
     # Try to load validation set, fall back to using train if not available
     try:
         val_dataset = LaughterDataset(
-            Path(args.features_dir),
+            concat_dir=Path(args.features_dir),
             split='validation',
-            shift_frames=args.shift_frames,
-            shuffle=False
+            shuffle=False,
+            mmap_mode=None  # Load into memory
         )
     except FileNotFoundError:
         if is_master:

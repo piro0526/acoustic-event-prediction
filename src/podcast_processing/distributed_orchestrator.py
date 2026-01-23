@@ -37,7 +37,9 @@ class DistributedOrchestrator:
         dataset_root: str | Path,
         output_root: str | Path,
         hf_repo: str = 'kyutai/moshiko-pytorch-bf16',
-        shift_frames: int = 1
+        shift_frames: int = 1,
+        mask_system_audio: bool = False,
+        mask_mode: str = 'laughter'
     ):
         """Initialize orchestrator.
 
@@ -46,17 +48,24 @@ class DistributedOrchestrator:
             output_root: Root directory for output files
             hf_repo: HuggingFace repository for models
             shift_frames: Prediction shift value for label generation
+            mask_system_audio: Whether to apply masking to system audio (default: False)
+            mask_mode: Masking mode - 'laughter' or 'none' (default: 'laughter')
         """
         self.dataset_root = Path(dataset_root)
         self.output_root = Path(output_root)
         self.hf_repo = hf_repo
         self.shift_frames = shift_frames
+        self.mask_system_audio = mask_system_audio
+        self.mask_mode = mask_mode
 
         # Annotations directory
         self.annotations_dir = self.dataset_root / 'metadata' / 'episode_event_speaker_mapping'
 
         # Create output directories
         self.output_root.mkdir(parents=True, exist_ok=True)
+
+        # Set up mask generator based on mode
+        self.mask_generator = self._get_mask_generator() if mask_system_audio else None
 
     def run(self):
         """Main execution method for distributed processing."""
@@ -128,7 +137,11 @@ class DistributedOrchestrator:
         logger.info(f"Models loaded on {device}")
 
         # Create processor
-        processor = EpisodeProcessor(mimi, lm_model, tokenizer, device, shift_frames=self.shift_frames)
+        processor = EpisodeProcessor(
+            mimi, lm_model, tokenizer, device,
+            shift_frames=self.shift_frames,
+            mask_system_audio=self.mask_system_audio
+        )
 
         # Process episodes
         success_count = 0
@@ -155,7 +168,8 @@ class DistributedOrchestrator:
                     processor.process_episode(
                         episode_info=episode,
                         output_root=self.output_root,
-                        annotations_dir=self.annotations_dir
+                        annotations_dir=self.annotations_dir,
+                        mask_generator=self.mask_generator
                     )
 
                     success_count += 1
@@ -235,3 +249,17 @@ class DistributedOrchestrator:
         root_logger.setLevel(logging.DEBUG)
         root_logger.addHandler(file_handler)
         root_logger.addHandler(console_handler)
+
+    def _get_mask_generator(self):
+        """Get mask generator function based on mask_mode.
+
+        Returns:
+            Callable that takes (laughter_events, duration, system_speaker_id) and returns mask array
+        """
+        if self.mask_mode == 'laughter':
+            from podcast_processing.audio_masking import create_laughter_mask
+            return create_laughter_mask
+        elif self.mask_mode == 'none':
+            return None
+        else:
+            raise ValueError(f"Unknown mask_mode: {self.mask_mode}")

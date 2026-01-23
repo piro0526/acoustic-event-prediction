@@ -10,6 +10,13 @@ Usage:
         --dataset_root data/PodcastFillers \
         --output_root output/laughter/features \
         --shift_frames 5
+
+    # With system audio masking (mask out system speaker's laughter)
+    torchrun --nproc_per_node=8 compute_features.py \
+        --dataset_root data/PodcastFillers \
+        --output_root output/laughter/features_masked \
+        --mask_system_audio \
+        --mask_mode laughter
 """
 
 import argparse
@@ -50,6 +57,18 @@ def main():
         default=1,
         help='Prediction shift value in frames (e.g., 1, 5, 10, 25)'
     )
+    parser.add_argument(
+        '--mask_system_audio',
+        action='store_true',
+        help='Apply masking to system speaker audio (default: False)'
+    )
+    parser.add_argument(
+        '--mask_mode',
+        type=str,
+        default='laughter',
+        choices=['laughter', 'none'],
+        help='Masking mode: laughter (mask laughter events) or none (default: laughter)'
+    )
 
     args = parser.parse_args()
 
@@ -58,7 +77,9 @@ def main():
         dataset_root=args.dataset_root,
         output_root=args.output_root,
         hf_repo=args.hf_repo,
-        shift_frames=args.shift_frames
+        shift_frames=args.shift_frames,
+        mask_system_audio=args.mask_system_audio,
+        mask_mode=args.mask_mode
     )
 
     # Run processing
