@@ -36,7 +36,10 @@ class MultiSpeakerProcessor:
     6. Generates labels from ALL speakers' laughter
     """
 
-    SAMPLE_RATE = 24000
+    # Mimi encoder expects 24kHz audio
+    TARGET_SAMPLE_RATE = 24000
+    # Original audio files are at 16kHz
+    SOURCE_SAMPLE_RATE = 16000
     FRAME_RATE = 12.5
 
     def __init__(
@@ -141,7 +144,7 @@ class MultiSpeakerProcessor:
         # Load original mixed audio
         original_audio = self._load_original_audio(episode_info['audio_path'])
         num_samples = original_audio.shape[-1]
-        duration = num_samples / self.SAMPLE_RATE
+        duration = num_samples / self.TARGET_SAMPLE_RATE
 
         logger.info(f"Episode duration: {duration:.2f}s, samples: {num_samples}")
 
@@ -151,7 +154,7 @@ class MultiSpeakerProcessor:
             laughter_mask = create_all_laughter_mask(
                 laughter_events=laughter_events,
                 duration=duration,
-                sample_rate=self.SAMPLE_RATE,
+                sample_rate=self.TARGET_SAMPLE_RATE,
                 num_samples=num_samples
             )
             if laughter_mask is not None:
@@ -317,20 +320,28 @@ class MultiSpeakerProcessor:
         return [spk_id for spk_id, _ in valid_speakers]
 
     def _load_original_audio(self, audio_path: Path) -> torch.Tensor:
-        """Load original mixed audio file.
+        """Load original mixed audio file and resample to target rate.
 
         Args:
             audio_path: Path to audio file
 
         Returns:
-            Audio tensor [channels, samples]
+            Audio tensor [channels, samples] at TARGET_SAMPLE_RATE (24kHz)
         """
         audio, sr = torchaudio.load(audio_path)
 
-        if sr != self.SAMPLE_RATE:
-            raise ValueError(f"Expected {self.SAMPLE_RATE}Hz audio, got {sr}Hz")
-
         logger.debug(f"Loaded audio: {audio.shape}, {sr}Hz")
+
+        # Resample if needed (original files are 16kHz, Mimi expects 24kHz)
+        if sr != self.TARGET_SAMPLE_RATE:
+            logger.debug(f"Resampling from {sr}Hz to {self.TARGET_SAMPLE_RATE}Hz")
+            resampler = torchaudio.transforms.Resample(
+                orig_freq=sr,
+                new_freq=self.TARGET_SAMPLE_RATE
+            )
+            audio = resampler(audio)
+            logger.debug(f"Resampled audio: {audio.shape}")
+
         return audio
 
     def _create_speaker_mask_from_diarization(
@@ -353,8 +364,8 @@ class MultiSpeakerProcessor:
 
         for segment in diarization['segments']:
             if segment['speaker_id'] in speaker_ids:
-                start_sample = int(segment['start'] * self.SAMPLE_RATE)
-                end_sample = int(segment['end'] * self.SAMPLE_RATE)
+                start_sample = int(segment['start'] * self.TARGET_SAMPLE_RATE)
+                end_sample = int(segment['end'] * self.TARGET_SAMPLE_RATE)
                 start_sample = max(0, start_sample)
                 end_sample = min(num_samples, end_sample)
                 if start_sample < end_sample:
@@ -420,7 +431,7 @@ class MultiSpeakerProcessor:
         """
         # Check if audio needs chunking (>3.5 minutes = 210 seconds)
         max_chunk_duration = 210
-        max_chunk_samples = int(max_chunk_duration * self.SAMPLE_RATE)
+        max_chunk_samples = int(max_chunk_duration * self.TARGET_SAMPLE_RATE)
 
         max_samples = max(user_audio.shape[-1], system_audio.shape[-1])
 
@@ -509,7 +520,7 @@ class MultiSpeakerProcessor:
             Transformer output tensor [T, 4096]
         """
         chunk_duration = 210
-        chunk_samples = int(chunk_duration * self.SAMPLE_RATE)
+        chunk_samples = int(chunk_duration * self.TARGET_SAMPLE_RATE)
 
         max_samples = max(user_audio.shape[-1], system_audio.shape[-1])
         num_chunks = (max_samples + chunk_samples - 1) // chunk_samples
@@ -521,7 +532,7 @@ class MultiSpeakerProcessor:
         for chunk_idx in range(num_chunks):
             start_sample = chunk_idx * chunk_samples
             end_sample = min((chunk_idx + 1) * chunk_samples, max_samples)
-            chunk_actual_duration = (end_sample - start_sample) / self.SAMPLE_RATE
+            chunk_actual_duration = (end_sample - start_sample) / self.TARGET_SAMPLE_RATE
 
             logger.info(f"  Chunk {chunk_idx+1}/{num_chunks} ({chunk_actual_duration:.1f}s)")
 
@@ -532,8 +543,8 @@ class MultiSpeakerProcessor:
                           torch.zeros((system_audio.shape[0], end_sample - start_sample))
 
             # Filter and adjust alignments for this chunk
-            chunk_start_time = start_sample / self.SAMPLE_RATE
-            chunk_end_time = end_sample / self.SAMPLE_RATE
+            chunk_start_time = start_sample / self.TARGET_SAMPLE_RATE
+            chunk_end_time = end_sample / self.TARGET_SAMPLE_RATE
             chunk_alignments = [
                 (word, (start - chunk_start_time, end - chunk_start_time), speaker)
                 for word, (start, end), speaker in alignments
