@@ -129,3 +129,53 @@ def create_interval_mask(
     logger.debug(f"Interval mask: {masked_count}/{num_samples} samples ({100.0 * masked_count / num_samples:.2f}%)")
 
     return mask
+
+
+def create_all_laughter_mask(
+    laughter_events: List[Dict],
+    duration: float,
+    sample_rate: int = 24000,
+    num_samples: Optional[int] = None
+) -> Optional[np.ndarray]:
+    """Create audio mask from ALL laughter events (no speaker filtering).
+
+    Unlike create_laughter_mask(), this function includes laughter events from
+    ALL speakers without filtering by speaker_id.
+
+    Args:
+        laughter_events: List of laughter event dictionaries
+        duration: Episode duration in seconds
+        sample_rate: Audio sample rate in Hz (default: 24000)
+        num_samples: Exact number of samples (if None, computed from duration)
+
+    Returns:
+        Boolean mask [num_samples] where True = mask (zero out), or None if no events
+    """
+    if num_samples is None:
+        num_samples = int(duration * sample_rate)
+    mask = np.zeros(num_samples, dtype=bool)
+
+    if not laughter_events:
+        logger.debug("No laughter events found")
+        return None
+
+    logger.debug(f"Creating mask from {len(laughter_events)} laughter events (all speakers)")
+
+    for event in laughter_events:
+        start_time = event['event_start_inepisode']
+        end_time = event['event_end_inepisode']
+
+        start_sample = int(start_time * sample_rate)
+        end_sample = int(end_time * sample_rate)
+
+        # Clamp to valid range
+        start_sample = max(0, start_sample)
+        end_sample = min(num_samples, end_sample)
+
+        if start_sample < end_sample:
+            mask[start_sample:end_sample] = True
+
+    masked_count = mask.sum()
+    logger.debug(f"All-laughter mask covers {masked_count}/{num_samples} samples ({100.0 * masked_count / num_samples:.2f}%)")
+
+    return mask

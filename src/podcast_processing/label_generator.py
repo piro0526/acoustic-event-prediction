@@ -97,6 +97,49 @@ class LabelGenerator:
 
         return labels
 
+    def create_labels_all_speakers(
+        self,
+        laughter_events: List[Dict],
+        num_frames: int,
+        shift_frames: int = 1
+    ) -> torch.Tensor:
+        """Create prediction labels from ALL speakers' laughter (no filtering).
+
+        Unlike create_labels_prediction(), this method includes laughter events
+        from ALL speakers without filtering by speaker_id.
+
+        Args:
+            laughter_events: List of event dicts from load_laughter_events()
+            num_frames: Total number of frames T
+            shift_frames: How many frames ahead to predict
+
+        Returns:
+            Binary labels tensor [T] (int64)
+        """
+        labels = torch.zeros(num_frames, dtype=torch.int64)
+
+        logger.debug(f"Processing {len(laughter_events)} laughter events (all speakers)")
+
+        for event in laughter_events:
+            start_time = event['event_start_inepisode']
+            end_time = event['event_end_inepisode']
+
+            start_frame = int(start_time * self.frame_rate)
+            end_frame = int(end_time * self.frame_rate)
+
+            # Shift labels earlier (predict future frames)
+            start_frame = start_frame - shift_frames
+            end_frame = end_frame - shift_frames
+
+            # Clamp to valid range
+            start_frame = max(0, start_frame)
+            end_frame = min(num_frames, end_frame)
+
+            if start_frame < end_frame:
+                labels[start_frame:end_frame] = 1
+
+        return labels
+
     def compute_label_statistics(self, labels: torch.Tensor) -> Dict:
         """Compute statistics for label tensor.
 

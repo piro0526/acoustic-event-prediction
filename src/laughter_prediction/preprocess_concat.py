@@ -94,8 +94,16 @@ class FeaturesConcatenator:
             with open(metadata_path, 'r') as f:
                 ep_metadata = json.load(f)
 
-            # Process both assignments
-            for assignment_idx in [0, 1]:
+            # Discover all assignments (supports variable number)
+            assignment_files = sorted(episode_dir.glob('features_assignment_*.npy'))
+            num_assignments = len(assignment_files)
+
+            if num_assignments == 0:
+                logger.warning(f"No feature files found in {episode_dir}, skipping")
+                continue
+
+            # Process all assignments
+            for assignment_idx in range(num_assignments):
                 features_path = episode_dir / f'features_assignment_{assignment_idx}.npy'
                 labels_path = episode_dir / f'labels_assignment_{assignment_idx}_shift_{self.shift_frames}.npy'
 
@@ -122,20 +130,33 @@ class FeaturesConcatenator:
                 num_frames = features.shape[0]
                 end_frame = start_frame + num_frames
 
+                # Handle both old and new metadata formats
                 assignment_info = ep_metadata['assignments'][assignment_idx]
                 num_positive = int(labels.sum())
 
-                episode_metadata.append({
+                # Build episode entry with flexible speaker info
+                episode_entry = {
                     'episode_name': episode_name,
                     'assignment_idx': assignment_idx,
                     'user_speaker_id': assignment_info['user_speaker_id'],
-                    'system_speaker_id': assignment_info['system_speaker_id'],
                     'start_frame': start_frame,
                     'end_frame': end_frame,
                     'num_frames': num_frames,
                     'num_positive_frames': num_positive,
                     'positive_rate': float(num_positive / num_frames) if num_frames > 0 else 0.0
-                })
+                }
+
+                # Handle both old format (system_speaker_id) and new format (system_speaker_ids)
+                if 'system_speaker_ids' in assignment_info:
+                    episode_entry['system_speaker_ids'] = assignment_info['system_speaker_ids']
+                elif 'system_speaker_id' in assignment_info:
+                    episode_entry['system_speaker_id'] = assignment_info['system_speaker_id']
+
+                # Include speaking ratio if available (new format)
+                if 'user_speaking_ratio' in assignment_info:
+                    episode_entry['user_speaking_ratio'] = assignment_info['user_speaking_ratio']
+
+                episode_metadata.append(episode_entry)
 
                 # Accumulate
                 all_features.append(features)
@@ -173,6 +194,7 @@ class FeaturesConcatenator:
             'split': split,
             'shift_frames': self.shift_frames,
             'num_episodes': len(set(ep['episode_name'] for ep in episode_metadata)),
+            'num_assignments': len(episode_metadata),
             'num_frames': total_frames,
             'num_positive_frames': total_positive,
             'positive_rate': float(total_positive / total_frames) if total_frames > 0 else 0.0,
