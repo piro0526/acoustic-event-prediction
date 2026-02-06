@@ -30,7 +30,15 @@ class EpisodeProcessor:
     6. Saving results with metadata
     """
 
-    def __init__(self, mimi, lm_model, tokenizer, device, shift_frames: int, mask_system_audio: bool = False):
+    def __init__(
+        self,
+        mimi,
+        lm_model,
+        tokenizer,
+        device,
+        shift_frames: int,
+        mask_system_audio: bool = False,
+    ):
         """Initialize processor with models.
 
         Args:
@@ -175,7 +183,7 @@ class EpisodeProcessor:
                 laughter_events=laughter_events,
                 num_frames=num_frames,
                 user_speaker_id=assign_info['user'],
-                shift_frames=self.shift_frames
+                shift_frames=self.shift_frames,
             )
 
             stats = self.label_generator.compute_label_statistics(labels)

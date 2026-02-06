@@ -35,7 +35,10 @@ class MultiSpeakerOrchestrator:
         shift_frames: int = 1,
         min_speaker_share: float = 0.20,
         mask_laughter: bool = True,
-        splits: list[str] = None
+        splits: list[str] = None,
+        moshi_weights: str | None = None,
+        mimi_weights: str | None = None,
+        config_path: str | None = None
     ):
         """Initialize orchestrator.
 
@@ -47,6 +50,9 @@ class MultiSpeakerOrchestrator:
             min_speaker_share: Minimum speaking ratio for user speaker (default: 0.20)
             mask_laughter: Whether to mask laughter in both audio streams (default: True)
             splits: List of splits to process (default: ['train', 'validation', 'test'])
+            moshi_weights: Path to local Moshi weights (default: None, use HF repo)
+            mimi_weights: Path to local Mimi weights (default: None, use HF repo)
+            config_path: Path to local config file (default: None, use HF repo)
         """
         self.dataset_root = Path(dataset_root)
         self.output_root = Path(output_root)
@@ -55,6 +61,9 @@ class MultiSpeakerOrchestrator:
         self.min_speaker_share = min_speaker_share
         self.mask_laughter = mask_laughter
         self.splits = splits or ['train', 'validation', 'test']
+        self.moshi_weights = moshi_weights
+        self.mimi_weights = mimi_weights
+        self.config_path = config_path
 
         # Directory paths
         self.audio_dir = self.dataset_root / 'audio' / 'episode_wav'
@@ -115,9 +124,9 @@ class MultiSpeakerOrchestrator:
 
         checkpoint = CheckpointInfo.from_hf_repo(
             hf_repo=self.hf_repo,
-            moshi_weights="models/moshi/consolidated.safetensors",
-            mimi_weights="models/mimi/consolidated.safetensors",
-            config_path="models/moshi/config.json"
+            moshi_weights=self.moshi_weights,
+            mimi_weights=self.mimi_weights,
+            config_path=self.config_path,
         )
 
         mimi = checkpoint.get_mimi(device=device)

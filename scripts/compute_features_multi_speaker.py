@@ -102,6 +102,27 @@ def main():
         help='Limit number of episodes to process (for testing)'
     )
 
+    parser.add_argument(
+        '--moshi_weights',
+        type=str,
+        default=None,
+        help='Path to local Moshi weights (default: use HF repo weights)'
+    )
+
+    parser.add_argument(
+        '--mimi_weights',
+        type=str,
+        default=None,
+        help='Path to local Mimi weights (default: use HF repo weights)'
+    )
+
+    parser.add_argument(
+        '--config_path',
+        type=str,
+        default=None,
+        help='Path to local model config (default: use HF repo config)'
+    )
+
     args = parser.parse_args()
 
     # Determine mask_laughter setting
@@ -122,6 +143,12 @@ def main():
     print(f"Min speaker share: {args.min_speaker_share*100:.0f}%")
     print(f"Mask laughter: {mask_laughter}")
     print(f"Splits: {args.splits}")
+    if args.moshi_weights:
+        print(f"Moshi weights: {args.moshi_weights}")
+    if args.mimi_weights:
+        print(f"Mimi weights: {args.mimi_weights}")
+    if args.config_path:
+        print(f"Config path: {args.config_path}")
     if args.limit:
         print(f"Limit: {args.limit} episodes")
     print("=" * 60)
@@ -134,7 +161,10 @@ def main():
         shift_frames=args.shift_frames,
         min_speaker_share=args.min_speaker_share,
         mask_laughter=mask_laughter,
-        splits=args.splits
+        splits=args.splits,
+        moshi_weights=args.moshi_weights,
+        mimi_weights=args.mimi_weights,
+        config_path=args.config_path,
     )
 
     orchestrator.run(limit=args.limit)

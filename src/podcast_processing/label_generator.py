@@ -51,18 +51,18 @@ class LabelGenerator:
         laughter_events: List[Dict],
         num_frames: int,
         user_speaker_id: str,
-        shift_frames: int = 1
+        shift_frames: int = 1,
     ) -> torch.Tensor:
-        """Create prediction labels (frames before laughter).
+        """Create prediction labels (frames before laughter onset).
 
-        Labels frames that are N frames BEFORE laughter events.
-        If frame t has label 1, it means frame t+shift_frames will have laughter.
+        Labels frames s-n to s-1 where s is the onset frame and n is shift_frames.
+        For each labeled frame t, laughter onset will occur within the next n frames.
 
         Args:
             laughter_events: List of event dicts from load_laughter_events()
             num_frames: Total number of frames T
             user_speaker_id: Which speaker is 'user' (e.g., 'SPEAKER_00')
-            shift_frames: How many frames ahead to predict
+            shift_frames: How many frames ahead to predict (labels n frames before onset)
 
         Returns:
             Binary labels tensor [T] (int64)
@@ -79,21 +79,14 @@ class LabelGenerator:
 
         for event in user_events:
             start_time = event['event_start_inepisode']
-            end_time = event['event_end_inepisode']
+            onset_frame = int(start_time * self.frame_rate)
 
-            start_frame = int(start_time * self.frame_rate)
-            end_frame = int(end_time * self.frame_rate)
+            # Label frames s-n to s-1 (n frames before onset)
+            label_start = max(0, onset_frame - shift_frames)
+            label_end = min(num_frames, onset_frame)
 
-            # Shift labels earlier (predict future frames)
-            start_frame = start_frame - shift_frames
-            end_frame = end_frame - shift_frames
-
-            # Clamp to valid range
-            start_frame = max(0, start_frame)
-            end_frame = min(num_frames, end_frame)
-
-            if start_frame < end_frame:
-                labels[start_frame:end_frame] = 1
+            if label_start < label_end:
+                labels[label_start:label_end] = 1
 
         return labels
 
@@ -101,17 +94,18 @@ class LabelGenerator:
         self,
         laughter_events: List[Dict],
         num_frames: int,
-        shift_frames: int = 1
+        shift_frames: int = 1,
     ) -> torch.Tensor:
-        """Create prediction labels from ALL speakers' laughter (no filtering).
+        """Create prediction labels from ALL speakers' laughter onset (no filtering).
 
         Unlike create_labels_prediction(), this method includes laughter events
         from ALL speakers without filtering by speaker_id.
+        Labels frames s-n to s-1 where s is the onset frame and n is shift_frames.
 
         Args:
             laughter_events: List of event dicts from load_laughter_events()
             num_frames: Total number of frames T
-            shift_frames: How many frames ahead to predict
+            shift_frames: How many frames ahead to predict (labels n frames before onset)
 
         Returns:
             Binary labels tensor [T] (int64)
@@ -122,21 +116,14 @@ class LabelGenerator:
 
         for event in laughter_events:
             start_time = event['event_start_inepisode']
-            end_time = event['event_end_inepisode']
+            onset_frame = int(start_time * self.frame_rate)
 
-            start_frame = int(start_time * self.frame_rate)
-            end_frame = int(end_time * self.frame_rate)
+            # Label frames s-n to s-1 (n frames before onset)
+            label_start = max(0, onset_frame - shift_frames)
+            label_end = min(num_frames, onset_frame)
 
-            # Shift labels earlier (predict future frames)
-            start_frame = start_frame - shift_frames
-            end_frame = end_frame - shift_frames
-
-            # Clamp to valid range
-            start_frame = max(0, start_frame)
-            end_frame = min(num_frames, end_frame)
-
-            if start_frame < end_frame:
-                labels[start_frame:end_frame] = 1
+            if label_start < label_end:
+                labels[label_start:label_end] = 1
 
         return labels
 
@@ -204,18 +191,18 @@ class AnnotationLabelGenerator:
         self,
         laughter_events: List[Dict],
         num_frames: int,
-        shift_frames: int = 1
+        shift_frames: int = 1,
     ) -> torch.Tensor:
-        """Create prediction labels (frames before laughter).
+        """Create prediction labels (frames before laughter onset).
 
-        Labels frames that are N frames BEFORE laughter events.
-        If frame t has label 1, it means frame t+shift_frames will have laughter.
+        Labels frames s-n to s-1 where s is the onset frame and n is shift_frames.
+        For each labeled frame t, laughter onset will occur within the next n frames.
         Unlike LabelGenerator, this does not filter by speaker.
 
         Args:
             laughter_events: List of event dicts from load_laughter_events()
             num_frames: Total number of frames T
-            shift_frames: How many frames ahead to predict
+            shift_frames: How many frames ahead to predict (labels n frames before onset)
 
         Returns:
             Binary labels tensor [T] (int64)
@@ -226,21 +213,14 @@ class AnnotationLabelGenerator:
 
         for event in laughter_events:
             start_time = event['event_start_inepisode']
-            end_time = event['event_end_inepisode']
+            onset_frame = int(start_time * self.frame_rate)
 
-            start_frame = int(start_time * self.frame_rate)
-            end_frame = int(end_time * self.frame_rate)
+            # Label frames s-n to s-1 (n frames before onset)
+            label_start = max(0, onset_frame - shift_frames)
+            label_end = min(num_frames, onset_frame)
 
-            # Shift labels earlier (predict future frames)
-            start_frame = start_frame - shift_frames
-            end_frame = end_frame - shift_frames
-
-            # Clamp to valid range
-            start_frame = max(0, start_frame)
-            end_frame = min(num_frames, end_frame)
-
-            if start_frame < end_frame:
-                labels[start_frame:end_frame] = 1
+            if label_start < label_end:
+                labels[label_start:label_end] = 1
 
         return labels
 

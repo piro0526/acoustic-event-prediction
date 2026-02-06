@@ -54,17 +54,17 @@ def compute_metrics(
     }
 
     # Compute AUROC (requires probabilities, not binary predictions)
+    # Always include in metrics, default to 0.0 if only one class is present
     try:
         metrics['auroc'] = roc_auc_score(labels, predictions)
     except ValueError:
-        # Can fail if only one class is present in labels
         metrics['auroc'] = 0.0
 
     # Compute AUPRC (requires probabilities, not binary predictions)
+    # Always include in metrics, default to 0.0 if only one class is present
     try:
         metrics['auprc'] = average_precision_score(labels, predictions)
     except ValueError:
-        # Can fail if only one class is present in labels
         metrics['auprc'] = 0.0
 
     return metrics

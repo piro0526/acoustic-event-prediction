@@ -50,7 +50,7 @@ class DatasetEnumerator:
 
                 diarization_path = (
                     self.dataset_root / 'metadata' / 'episode_diarizations' /
-                    split / episode_name / 'metadata.json'
+                    split / f"{episode_name}.json"
                 )
 
                 transcript_path = (

@@ -39,7 +39,7 @@ class DistributedOrchestrator:
         hf_repo: str = 'kyutai/moshiko-pytorch-bf16',
         shift_frames: int = 1,
         mask_system_audio: bool = False,
-        mask_mode: str = 'laughter'
+        mask_mode: str = 'laughter',
     ):
         """Initialize orchestrator.
 
@@ -140,7 +140,7 @@ class DistributedOrchestrator:
         processor = EpisodeProcessor(
             mimi, lm_model, tokenizer, device,
             shift_frames=self.shift_frames,
-            mask_system_audio=self.mask_system_audio
+            mask_system_audio=self.mask_system_audio,
         )
 
         # Process episodes

@@ -29,8 +29,8 @@ dependencies = [
     "seaborn>=0.12.0",      # For confusion matrix visualization
     "pandas >= 2.0.0",        # For data handling
     "tensorboard>=2.14.0",  # For training visualization
-    "umap-learn>=0.5.11",
-    "lightgbm>=4.6.0",
+    "jupyter>=1.1.1",
+    "maai>=0.1.16",
 ]
 
 [project.optional-dependencies]

@@ -254,9 +254,8 @@ def validate(
         writer.add_scalar('val/precision', metrics['precision'], epoch)
         writer.add_scalar('val/recall', metrics['recall'], epoch)
         writer.add_scalar('val/f1', metrics['f1'], epoch)
-        # Use 'auroc' key (not 'auc') as returned by compute_metrics
-        if 'auroc' in metrics:
-            writer.add_scalar('val/auroc', metrics['auroc'], epoch)
+        writer.add_scalar('val/auroc', metrics['auroc'], epoch)
+        writer.add_scalar('val/auprc', metrics['auprc'], epoch)
 
     return metrics
 
@@ -552,14 +551,14 @@ def main():
 
     scheduler = ReduceLROnPlateau(
         optimizer,
-        mode='max',  # Maximize F1 score
+        mode='max',  # Maximize average precision (AUPRC)
         factor=0.5,
         patience=3
     )
 
 
     # Training loop
-    best_loss = float('inf')
+    best_auprc = 0.0  # Track best average precision (higher is better)
     patience_counter = 0
 
     if is_master:
@@ -585,8 +584,8 @@ def main():
             writer=writer, epoch=epoch
         )
 
-        # Update learning rate scheduler
-        scheduler.step(val_metrics['f1'])
+        # Update learning rate scheduler based on average precision
+        scheduler.step(val_metrics['auprc'])
 
         # Log metrics
         if is_master:
@@ -594,6 +593,7 @@ def main():
                 f"Epoch {epoch+1}/{args.epochs} - "
                 f"Train Loss: {train_loss:.4f} - "
                 f"Val Loss: {val_metrics['loss']:.4f} - "
+                f"Val AUPRC: {val_metrics['auprc']:.4f} - "
                 f"Val F1: {val_metrics['f1']:.4f} - "
                 f"Val Precision: {val_metrics['precision']:.4f} - "
                 f"Val Recall: {val_metrics['recall']:.4f}"
@@ -610,15 +610,15 @@ def main():
                 scheduler
             )
 
-            # Save best model
-            if val_metrics['loss'] < best_loss:
-                best_loss = val_metrics['loss']
+            # Save best model based on average precision (higher is better)
+            if val_metrics['auprc'] > best_auprc:
+                best_auprc = val_metrics['auprc']
                 save_checkpoint(
                     model, optimizer, epoch, val_metrics,
                     checkpoint_dir / 'best_model.pt',
                     scheduler
                 )
-                logger.info(f"New best Loss: {best_loss:.4f}")
+                logger.info(f"New best AUPRC: {best_auprc:.4f}")
                 patience_counter = 0
             else:
                 patience_counter += 1
@@ -631,23 +631,26 @@ def main():
                 )
                 break
 
-    # Final evaluation
+    # Final evaluation - all ranks must participate due to dist.all_reduce in validate()
     if is_master:
         logger.info("\nTraining completed!")
-        logger.info(f"Best validation Loss: {best_loss:.4f}")
-
-        # Load best model and evaluate
+        logger.info(f"Best validation AUPRC: {best_auprc:.4f}")
         logger.info("\nEvaluating best model...")
-        load_checkpoint(
-            checkpoint_dir / 'best_model.pt',
-            model,
-            device=device
-        )
 
-        val_metrics = validate(
-            model, val_loader, criterion, device, world_size, rank
-        )
+    # All ranks load best model
+    load_checkpoint(
+        checkpoint_dir / 'best_model.pt',
+        model,
+        device=device
+    )
 
+    # All ranks participate in validation (required for dist.all_reduce)
+    val_metrics = validate(
+        model, val_loader, criterion, device, world_size, rank
+    )
+
+    # Only master prints results
+    if is_master:
         print_metrics_report(val_metrics, prefix="Final Validation ")
 
     # Close TensorBoard writer
