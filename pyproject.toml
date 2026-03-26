@@ -17,9 +17,9 @@ dependencies = [
     # HuggingFace (from Moshi)
     "huggingface-hub >= 0.24, < 0.34",
     # Audio processing (from Moshi)
-    "sphn >= 0.1.4, < 0.2.0",  # For Opus streaming support
+    "sphn >= 0.1.4, < 0.2.0", # For Opus streaming support
     "sounddevice == 0.5",
-    "soundfile >= 0.12.1",  # Backend for torchaudio to load audio files
+    "soundfile >= 0.12.1", # Backend for torchaudio to load audio files
     "aiohttp>=3.10.5, <3.12",
     # Optional: bitsandbytes for quantization (Linux only, from Moshi)
     "bitsandbytes >= 0.45, < 0.46; sys_platform == 'linux'",
@@ -31,7 +31,6 @@ dependencies = [
     "transformers>=4.40.0",  # For DeBERTa and other HF models
     "tensorboard>=2.14.0",  # For training visualization
     "jupyter>=1.1.1",
-    "maai>=0.1.16",
 ]
 
 [project.optional-dependencies]
