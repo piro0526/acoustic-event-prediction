@@ -28,6 +28,7 @@ dependencies = [
     "matplotlib>=3.7.0",    # For plots
     "seaborn>=0.12.0",      # For confusion matrix visualization
     "pandas >= 2.0.0",        # For data handling
+    "transformers>=4.40.0",  # For DeBERTa and other HF models
     "tensorboard>=2.14.0",  # For training visualization
     "jupyter>=1.1.1",
     "maai>=0.1.16",
