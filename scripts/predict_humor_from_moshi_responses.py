@@ -211,64 +211,63 @@ def main():
     T_silence = silence_codes.shape[-1]
     T_total = T_input + T_silence
 
-    # Expand for batch sampling
-    input_codes = input_codes.expand(args.num_samples, -1, -1)
-    silence_codes = silence_codes.expand(args.num_samples, -1, -1)
-
     print(f"  Input frames: {T_input}, Silence frames: {T_silence}, Total: {T_total}")
-    print(f"  Generating {args.num_samples} response samples...\n")
+    print(f"  Generating {args.num_samples} response samples (sequentially)...\n")
 
-    # --- Streaming inference ---
-    lm_gen = LMGen(
-        moshi_lm,
-        use_sampling=True,
-        temp=args.temp_audio,
-        temp_text=args.temp_text,
-        top_k=args.top_k_audio,
-        top_k_text=args.top_k_text,
-    )
-
-    transformer_outs = [[] for _ in range(args.num_samples)]  # per-sample transformer_out
-    response_text_tokens = [[] for _ in range(args.num_samples)]
-    response_audio_tokens = [[] for _ in range(args.num_samples)]
+    # --- Streaming inference (one sample at a time to fit in GPU memory) ---
+    transformer_outs = []  # list of [T, dim] per sample
+    response_text_tokens = []
+    response_audio_tokens = []
 
     start_time = time.time()
 
-    with torch.no_grad(), lm_gen.streaming(batch_size=args.num_samples):
-        # Process input audio
-        for step in range(T_input):
-            result = lm_gen._step(input_codes[:, :, step : step + 1])
-            if result is not None:
-                tokens_out, transformer_out = result
-                # Clone immediately: transformer_out may be a CUDA graph static buffer
-                # that gets overwritten on the next step.
-                tout = transformer_out[:args.num_samples].clone()
-                for b in range(args.num_samples):
-                    transformer_outs[b].append(tout[b, 0].float().cpu())
-                del tout, transformer_out
+    for sample_idx in range(args.num_samples):
+        sample_touts = []
+        sample_text_tokens = []
+        sample_audio_tokens = []
 
-        # Process silence (response generation window)
-        for step in range(T_silence):
-            result = lm_gen._step(silence_codes[:, :, step : step + 1])
-            if result is not None:
-                tokens_out, transformer_out = result
-                tout = transformer_out[:args.num_samples].clone()
-                for b in range(args.num_samples):
-                    transformer_outs[b].append(tout[b, 0].float().cpu())
-                    text_token = tokens_out[b, 0, 0].item()
-                    response_text_tokens[b].append(text_token)
+        lm_gen = LMGen(
+            moshi_lm,
+            use_sampling=True,
+            temp=args.temp_audio,
+            temp_text=args.temp_text,
+            top_k=args.top_k_audio,
+            top_k_text=args.top_k_text,
+        )
+
+        with torch.no_grad(), lm_gen.streaming(batch_size=1):
+            # Process input audio
+            for step in range(T_input):
+                result = lm_gen._step(input_codes[:, :, step : step + 1])
+                if result is not None:
+                    tokens_out, transformer_out = result
+                    sample_touts.append(transformer_out[0, 0].float().cpu().clone())
+
+            # Process silence (response generation window)
+            for step in range(T_silence):
+                result = lm_gen._step(silence_codes[:, :, step : step + 1])
+                if result is not None:
+                    tokens_out, transformer_out = result
+                    sample_touts.append(transformer_out[0, 0].float().cpu().clone())
+                    sample_text_tokens.append(tokens_out[0, 0, 0].item())
                     if tokens_out.shape[1] > 1:
-                        response_audio_tokens[b].append(tokens_out[b, 1:, 0].cpu())
-                del tout, transformer_out
+                        sample_audio_tokens.append(tokens_out[0, 1:, 0].cpu())
+
+        transformer_outs.append(torch.stack(sample_touts))  # [T, dim]
+        response_text_tokens.append(sample_text_tokens)
+        response_audio_tokens.append(sample_audio_tokens)
+
+        text_preview = decode_tokens(text_tokenizer, sample_text_tokens)
+        print(f"  Sample {sample_idx}: {len(sample_touts)} frames, text='{text_preview[:60]}'")
 
     gen_time = time.time() - start_time
-    print(f"Generation completed in {gen_time:.1f}s ({T_total / gen_time:.1f} steps/s)\n")
+    print(f"\nGeneration completed in {gen_time:.1f}s ({args.num_samples * T_total / gen_time:.1f} steps/s)\n")
 
     # --- Humor prediction on collected transformer_out sequences ---
     print("Running humor prediction on transformer_out sequences...")
 
-    # Stack per-sample sequences: each is [T_i, dim]
-    features_list = [torch.stack(tos) for tos in transformer_outs]  # list of [T_i, 4096]
+    # Each element in transformer_outs is already [T_i, dim]
+    features_list = transformer_outs
     lengths = [f.shape[0] for f in features_list]
     max_len = max(lengths)
     dim = features_list[0].shape[1]
