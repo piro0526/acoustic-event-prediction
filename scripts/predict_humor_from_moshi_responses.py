@@ -26,6 +26,13 @@ Usage:
         --output_dir output/humor_inference
 """
 
+import os
+
+# Disable torch.compile by default to avoid Triton autotuning CUDA errors.
+# Set NO_TORCH_COMPILE=0 to re-enable if your environment supports it.
+if "NO_TORCH_COMPILE" not in os.environ:
+    os.environ["NO_TORCH_COMPILE"] = "1"
+
 import argparse
 import json
 import sys
