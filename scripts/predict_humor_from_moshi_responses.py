@@ -28,10 +28,12 @@ Usage:
 
 import os
 
-# Disable torch.compile by default to avoid Triton autotuning CUDA errors.
-# Set NO_TORCH_COMPILE=0 to re-enable if your environment supports it.
+# Disable torch.compile and CUDA graphs by default to avoid Triton/CUDA errors.
+# Set these to "0" to re-enable if your environment supports them.
 if "NO_TORCH_COMPILE" not in os.environ:
     os.environ["NO_TORCH_COMPILE"] = "1"
+if "NO_CUDA_GRAPH" not in os.environ:
+    os.environ["NO_CUDA_GRAPH"] = "1"
 
 import argparse
 import json
@@ -238,23 +240,26 @@ def main():
             result = lm_gen._step(input_codes[:, :, step : step + 1])
             if result is not None:
                 tokens_out, transformer_out = result
-                # transformer_out: [B, 1, dim] or [2B, 1, dim] with CFG
-                tout = transformer_out[:args.num_samples]  # take first B in case of CFG
+                # Clone immediately: transformer_out may be a CUDA graph static buffer
+                # that gets overwritten on the next step.
+                tout = transformer_out[:args.num_samples].clone()
                 for b in range(args.num_samples):
                     transformer_outs[b].append(tout[b, 0].float().cpu())
+                del tout, transformer_out
 
         # Process silence (response generation window)
         for step in range(T_silence):
             result = lm_gen._step(silence_codes[:, :, step : step + 1])
             if result is not None:
                 tokens_out, transformer_out = result
-                tout = transformer_out[:args.num_samples]
+                tout = transformer_out[:args.num_samples].clone()
                 for b in range(args.num_samples):
                     transformer_outs[b].append(tout[b, 0].float().cpu())
                     text_token = tokens_out[b, 0, 0].item()
                     response_text_tokens[b].append(text_token)
                     if tokens_out.shape[1] > 1:
                         response_audio_tokens[b].append(tokens_out[b, 1:, 0].cpu())
+                del tout, transformer_out
 
     gen_time = time.time() - start_time
     print(f"Generation completed in {gen_time:.1f}s ({T_total / gen_time:.1f} steps/s)\n")
